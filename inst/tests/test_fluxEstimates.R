@@ -13,7 +13,8 @@ times0 <- as.numeric(times) - as.numeric(times[1])
 
 test_that("default example flux Estimates runs",{
 			#trace(calcClosedChamberFlux, recover)		#untrace(calcClosedChamberFlux)
-			resFit <- calcClosedChamberFlux(ds, tLagFixed=0)
+			#resFit <- calcClosedChamberFlux(ds, debugInfo=list(tLagFixed=0))
+			resFit <- calcClosedChamberFlux(ds, useFixedTLag=0)
 			#plotResp(ds, resFit)
 		})
 

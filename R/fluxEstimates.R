@@ -12,7 +12,8 @@ calcClosedChamberFlux <- function(
 	,fRegressSelect = regressSelectPref1	 ##<< function to select the regression function based on fitting results. Signature and return must correspond to \code{\link{regressSelectPref1}} 
 	,concSensitivity=1		##<< measurement sensitivity of concentration. With concentration change below this sensitivity, only a linear model is fit
 	,maxLag = 50			##<< number of initial records to be screened for a breakpoint, i.e. the lag (higher for water vapour than for CO2)
-	,minTLag=0				##<< possibility to specify a minimum lag-time in seconds 
+	,minTLag=0				##<< possibility to specify a minimum lag-time in seconds
+	,useFixedTLag=NA		##<< scalar numeric value in seconds, if not-NA, use the specified lag-time instead of estimating the lag-time from the concentration data
   	,debugInfo=list(		##<< rarely used controls, mostly for debugging
 			##describe<<
     	useOscarsLagDectect=FALSE	##<< using the changepoint method for lag detection
@@ -31,6 +32,12 @@ calcClosedChamberFlux <- function(
 	#
 	if( !( is.numeric(ds[[colTime]]) ||  inherits(ds[[colTime]], "POSIXct")) ) stop(
 				"Timestamp column must be given in seconds, i.e. must be of class POSIXct, integer, or numeric. But it was of class ",paste(class(ds[[colTime]]),collapse=",") )
+	#
+	# formerly tLagFixed was specified with debugInfo, make this still work
+	if( (length(debugInfo$tLagFixed)==1L) && !is.na(debugInfo$tLagFixed) ){
+		warning("Using debugInfo$tLagFixed is deprecated. Please, use instead argument useFixedTLag.")
+		useFixedTLag <- debugInfo$tLagFixed
+	}
 	##details<< 
 	## The function \code{fRegress} must conform to \code{\link{regressFluxSquare}}, i.e.
 	## return a vector of length 2: the flux estimate and its standard deviation.
@@ -42,9 +49,9 @@ calcClosedChamberFlux <- function(
 	#plot( ds[[colConc] ~ ds[[colTime] )
 	if( !length(names(fRegress)) ) names(fRegress) <- 1:length(fRegress)
 	dslRes <- if( isTRUE(debugInfo$useOscarsLagDectect) ){
-		dslRes <- selectDataAfterLagOscar(ds, colConc=colConc, colTime=colTime, tLagFixed=debugInfo$tLagFixed)
+		dslRes <- selectDataAfterLagOscar(ds, colConc=colConc, colTime=colTime, tLagFixed=useFixedTLag)
 	} else {
-    	dslRes <- selectDataAfterLag(ds, colConc=colConc, colTime=colTime, tLagFixed=debugInfo$tLagFixed, maxLag=maxLag, minTLag=minTLag)
+    	dslRes <- selectDataAfterLag(ds, colConc=colConc, colTime=colTime, tLagFixed=useFixedTLag, maxLag=maxLag, minTLag=minTLag)
 	}
 	dsl <- dslRes$ds
 	# constrain to finite records for fitting
@@ -97,7 +104,7 @@ calcClosedChamberFlux <- function(
 	tryAutoCorr <- is.finite( fluxEst["autoCorr"] )
 	#
 	leverageEst <- if( !isTRUE(debugInfo$omitEstimateLeverage) ) sigmaBootLeverage(conc, times, fRegress=fReg
-		, coefStart=coefStart, tryAutoCorr=tryAutoCorr ) else NA
+		, coefStart=coefStart, tryAutoCorr=tryAutoCorr, ... ) else NA
 	##details<<
 	## There are two kinds of uncertainty associated with the flux.
 	## The first comes from the uncertainty of the slope of concentration increase.
