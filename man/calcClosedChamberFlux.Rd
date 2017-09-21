@@ -7,9 +7,9 @@
     area = 1, fRegress = c(lin = regressFluxLinear, 
         tanh = regressFluxTanh), fRegressSelect = regressSelectPref1, 
     concSensitivity = 1, maxLag = 50, minTLag = 0, 
-    debugInfo = list(useOscarsLagDectect = FALSE, omitAutoCorrFit = FALSE, 
-        omitEstimateLeverage = FALSE, tLagFixed = NA, 
-        isStopOnError = FALSE), ...)}
+    useFixedTLag = NA, debugInfo = list(useOscarsLagDectect = FALSE, 
+        omitAutoCorrFit = FALSE, omitEstimateLeverage = FALSE, 
+        tLagFixed = NA, isStopOnError = FALSE), ...)}
 \arguments{
   \item{ds}{data.frame with concentration and time column of a chamber measurement of one replicate}
   \item{colConc}{column name of CO2 concentration [ppm]}
@@ -23,11 +23,12 @@
   \item{concSensitivity}{measurement sensitivity of concentration. With concentration change below this sensitivity, only a linear model is fit}
   \item{maxLag}{number of initial records to be screened for a breakpoint, i.e. the lag (higher for water vapour than for CO2)}
   \item{minTLag}{possibility to specify a minimum lag-time in seconds}
+  \item{useFixedTLag}{scalar numeric value in seconds, if not-NA, use the specified lag-time instead of estimating the lag-time from the concentration data}
   \item{debugInfo}{rarely used controls, mostly for debugging\describe{
 \item{useOscarsLagDectect}{using the changepoint method for lag detection}
 \item{omitAutoCorrFit}{set to TRUE to omit trying to fit autocorrelation (faster but maybe wrong (low) uncertainty estimate)}
 \item{omitEstimateLeverage}{set to TRUE to omit the time consuming bootstrap for uncertainty due to leverage}
-\item{tLagFixed}{possibility to specify the lagTime instead of estimating them}
+\item{tLagFixed}{deprecated in favour of argument \code{useFixedTLag}: possibility to specify the lagTime instead of estimating them}
 \item{isStopOnError}{set to TRUE to stop execution when no model could be fitted, instead of a warning}
 }}
   \item{\dots}{further arguments to \code{\link{sigmaBootLeverage}}}

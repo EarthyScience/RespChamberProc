@@ -1,3 +1,19 @@
+# RespChamberProc 0.6.2
+
+added geometry functions
+
+fixed support of tibbles in plotResp
+
+argument useFixedTLag to specify fixed lag-Time instead of estimating it from the data
+
+specification of different volumes by chunk more robust
+
+
+# RespChamberProc 0.6.1
+
+adapted to dplyr, changed return type of calcChamberFlux to nested data.frame
+
+
 # RespChamberProc 0.5.231
 
 ## Further changes

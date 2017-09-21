@@ -19,7 +19,7 @@ calcClosedChamberFlux <- function(
     	useOscarsLagDectect=FALSE	##<< using the changepoint method for lag detection
 		,omitAutoCorrFit=FALSE		##<< set to TRUE to omit trying to fit autocorrelation (faster but maybe wrong (low) uncertainty estimate)
 		,omitEstimateLeverage=FALSE	##<< set to TRUE to omit the time consuming bootstrap for uncertainty due to leverage
-		,tLagFixed=NA				##<< possibility to specify the lagTime instead of estimating them
+		,tLagFixed=NA				##<< deprecated in favour of argument \code{useFixedTLag}: possibility to specify the lagTime instead of estimating them
 		,isStopOnError = FALSE  	##<< set to TRUE to stop execution when no model could be fitted, instead of a warning
 			##end<<
 	)

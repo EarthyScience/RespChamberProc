@@ -10,14 +10,18 @@ calcChamberGeometryCuboid <- function (
 	##details<< the respiring surface is assumed to be the basal area of the chamber
 	##details<<
 	## There are functions for other geometries
-	## \begin{itemize}
+	## \itemize{
 	## \item Cylinder: \code{\link{calcChamberGeometryCylinder}}
+	## } 
 	respArea      <- width * depth
 	##value<< a vector with components
-	respArea = pi * radius^2.0
 	c (   chamberVolume = respArea * height * taper	##<< the volume inside the chamber in cubic meters
 		, respArea = respArea)				    	##<< the basal aera of the cylinder in square meters
 }
+attr (calcChamberGeometryCuboid,"ex") <- function(){
+	calcChamberGeometryCuboid(0.6,0.6,0.6)
+}
+
 
 calcChamberGeometryCylinder <- function (
 		### Calculate the inner volume of the chamber and the enclosed respiring surface area for a cylinder-shaped chamber.
