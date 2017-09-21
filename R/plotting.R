@@ -8,9 +8,9 @@ plotResp <- function(
 	,xlab="Time (s)"		##<< label of x axis
 	,label=""				##<< label of the time series
 ){
-	times <- unlist (dsi[,colTime]) 
+	times <- dsi[[colTime]] 
 	times0 <- as.numeric(times) - as.numeric(times[1])
-	plot( unlist (dsi[,colConc]) ~ times0, xlab=xlab, ylab="" )
+	plot( dsi[[colConc]] ~ times0, xlab=xlab, ylab="" )
 	mtext(ylab, 2, las=0, 2.3)
 	fluxText <- ""
 	if( length(resFlux) ){
@@ -34,5 +34,5 @@ attr(plotResp,"ex") <- function(){
 	#trace(calcClosedChamberFlux, recover)		#untrace(calcClosedChamberFlux)
 	resFlux <- calcClosedChamberFlux(dsi)
 	plotResp( dsi, label="Example 1" )			# without flux regression
-	plotResp( dsi, resFlux, label="Example 1" )
+	plotResp( as.tibble(dsi), resFlux, label="Example 1" )
 }

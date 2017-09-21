@@ -31,7 +31,7 @@ calcChamberGeometryCylinder <- function (
 	c (chamberVolume = respArea * height * taper	##<< the volume inside the chamber in cubic meters
 	   , respArea = respArea)				##<< the basal aera of the cylinder in square meters
 } 
-attr (calcChamberGeometry,"ex") <- function(){
+attr (calcChamberGeometryCylinder,"ex") <- function(){
   innerRadius <- 0.1016
   innerHeight <- 0.0762
   calcChamberGeometryCylinder(innerRadius, innerHeight)
