@@ -34,5 +34,3 @@ calcClosedChamberFluxForChunks <- function(
 	##value<< a tibble with a row for each measurement cycle and additonal column <colChunk> identifying the measurement cycle
 	ans
 }
-
-# TTR: Why not give it different areas by chunk, as well?
