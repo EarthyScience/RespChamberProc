@@ -78,9 +78,11 @@ calcClosedChamberFlux <- function(
 	# constrain to finite records for fitting
 	dsl <- dsl[ is.finite(dsl[[colConc]]) & is.finite(dsl[[colTime]]),,drop = FALSE]
 	retEntries <- c("flux", "fluxMedian", "sdFlux", "tLag", "lagIndex", "autoCorr"
-			,"AIC","sdFluxRegression","sdFluxLeverage", "iFRegress","sdResid","iqrResid","r2")
-	retEmpty <- list( stat = structure(rep(NA, length(retEntries)), names = retEntries )
-			,model = NULL)
+			, "AIC", "sdFluxRegression", "sdFluxLeverage", "iFRegress", "sdResid"
+			, "iqrResid", "r2", "times")
+	retEmpty <- tibble::as.tibble( t(structure(rep(NA_real_, length(retEntries))
+	                                 , names = retEntries )))
+	retEmpty$model <- list(NULL)
 	if (nrow(dsl) < 8L ) return(retEmpty)
 	concRange <- diff( quantile(dsl[[colConc]], c(0.05,0.95), na.rm = TRUE ))
 	if (concRange <= concSensitivity) {
