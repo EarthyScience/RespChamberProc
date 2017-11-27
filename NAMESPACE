@@ -7,7 +7,7 @@ import(methods)
   importFrom("graphics", "abline", "legend", "lines", "mtext", "plot")
   importFrom("stats", "AIC", "IQR", "coef", "coefficients", "lm",
              "median", "quantile", "resid", "residuals", "sd", "update",
-             "vcov")
+             "vcov","fitted")
   importFrom("utils", "capture.output", "read.table", "tail")
   
 importFrom(changepoint, cpt.mean)

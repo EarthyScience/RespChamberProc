@@ -80,7 +80,7 @@ calcClosedChamberFlux <- function(
 	retEntries <- c("flux", "fluxMedian", "sdFlux", "tLag", "lagIndex", "autoCorr"
 			, "AIC", "sdFluxRegression", "sdFluxLeverage", "iFRegress", "sdResid"
 			, "iqrResid", "r2", "times")
-	retEmpty <- tibble::as.tibble( t(structure(rep(NA_real_, length(retEntries))
+	retEmpty <- as_tibble( t(structure(rep(NA_real_, length(retEntries))
 	                                 , names = retEntries )))
 	retEmpty$model <- list(NULL)
 	if (nrow(dsl) < 8L ) return(retEmpty)

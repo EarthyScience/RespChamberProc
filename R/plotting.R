@@ -35,5 +35,5 @@ attr(plotResp,"ex") <- function(){
 	resFlux <- calcClosedChamberFlux(dsi)
 	plotResp( dsi, label="Example 1" )			# without flux regression
 	plotResp( dsi, resFlux, label="Example 1" )
-	#plotResp( as.tibble(dsi), resFlux, label="Example 1" )
+	#plotResp( as_tibble(dsi), resFlux, label="Example 1" )
 }
