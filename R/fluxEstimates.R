@@ -153,13 +153,16 @@ calcClosedChamberFlux <- function(
 	#
 	#corrFluxDensity( dsl, vol = 2)
 	resid <- residuals(mod)
+  # avoid -Inf returned by max in case of only NAs
+	sdFlux <- if (all(is.na(fluxEstTotal[c("sdFlux","sd")])) ) NA_real_ else
+	              max(fluxEstTotal["sdFlux"],leverageEstTotal["sd"], na.rm = TRUE)
 	##value<< data.frame (tibble) of one row with entries
 	res <- tibble::tibble( 
 		flux = as.numeric(fluxEstTotal[1])			      ##<< the estimate of the CO2 
 		  ## flux into the chamber [mumol / m2 / s]
 		,fluxMedian = as.numeric(leverageEstTotal[3])	##<< the median of the flux 
 		  ## bootsrap estimates [mumol / m2 / s]
-		,sdFlux = max(fluxEstTotal["sdFlux"],leverageEstTotal["sd"], na.rm = TRUE)	
+		,sdFlux = sdFlux	
 		  ### the standard deviation of the CO2 flux
 		,tLag = tLag		                             ##<< time of lag phase in seconds
 		,lagIndex = dslRes$lagIndex 					       ##<< index of the row at the 
