@@ -43,7 +43,7 @@ plotCampaignConcSeries <- function(
   #(as.numeric(unique(ds$id))-1)%/%plotsPerPage+1
   #dsp <- as_tibble(cbind(iPage =  factor((as.numeric(dsFin$id) - 1) %/% plotsPerPage + 1), dsFin))
   dsp <- as_tibble(dsFin)
-  dsp$idPage = factor((as.numeric(dsp$id) - 1) %/% plotsPerPage + 1)
+  dsp$iPage = factor((as.numeric(dsp$id) - 1) %/% plotsPerPage + 1)
   if (isVerbose ) message(paste("Number of pages (each ",plotsPerPage," plots): ", length(unique(dsp$iPage))), sep = "" )
   #dss <- filter_(dsp,~iPage==1)
   plotPage <-  function(dss){
