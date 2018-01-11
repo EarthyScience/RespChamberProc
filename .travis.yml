@@ -1,5 +1,31 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
+#language: R
+#sudo: false
+#cache: packages
+
 language: R
-sudo: false
+#sudo: false
+sudo: required  # to allow r_binary_packages
 cache: packages
+env: _R_CHECK_FORCE_SUGGESTS_=false
+
+# libraries necessary for RNetCDF and ncdf4
+#addons:
+#  apt:
+#    packages:
+#      - libnetcdf-dev
+#      - libudunits2-dev
+
+r_binary_packages:
+  - rlang
+  - changepoint
+  - nlme
+  - segmented
+  - tibble
+  - plyr
+  - purrr
+  - testthat
+  - knitr
+  - ggplot2
+
