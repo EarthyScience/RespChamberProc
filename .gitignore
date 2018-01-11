@@ -14,7 +14,7 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
-vignettes/*.md
+#vignettes/*.md  # put to github to view there
 vignettes/*files/
 /vignettes/figure/
 # inst/doc
