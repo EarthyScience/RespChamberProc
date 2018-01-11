@@ -2,7 +2,8 @@
 \alias{calcChamberGeometryCuboid}
 \title{calcChamberGeometryCuboid}
 \description{Calculate the inner volume of the chamber and the enclosed respiring surface area for a cuboid shaped chamber.}
-\usage{calcChamberGeometryCuboid(width, depth, height, taper = 1)}
+\usage{calcChamberGeometryCuboid(width, depth, height, 
+    taper = 1)}
 \arguments{
   \item{width}{the inner length of one basal edge in m}
   \item{depth}{the inner length of the other basal edge in m}

@@ -2,7 +2,8 @@
 \alias{calcChamberGeometryCylinder}
 \title{calcChamberGeometryCylinder}
 \description{Calculate the inner volume of the chamber and the enclosed respiring surface area for a cylinder-shaped chamber.}
-\usage{calcChamberGeometryCylinder(radius, height, taper = 1)}
+\usage{calcChamberGeometryCylinder(radius, height, 
+    taper = 1)}
 \arguments{
   \item{radius}{the inner radius of the cylinder in m}
   \item{height}{the inner height of the cyclinder in m}

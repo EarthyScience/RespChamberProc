@@ -1,13 +1,15 @@
 \name{regressFluxSquare}
 \alias{regressFluxSquare}
 \title{regressFluxSquare}
-\description{Estimate the initial flux and its standard deviation by polynomial regression}
-\usage{regressFluxSquare(conc, times, start = c(), tryAutoCorr = TRUE)}
+\description{Estimate the initial flux and its std-dev by polynomial regression}
+\usage{regressFluxSquare(conc, times, start = c(), 
+    tryAutoCorr = TRUE)}
 \arguments{
   \item{conc}{numeric vector of CO2 concentrations [ppm]}
   \item{times}{times of conc measurements	[seconds]
 
-used predictor vector, can be used for return for plotting}
+used predictor vector, can be used
+for return for plotting}
   \item{start}{numeric vector of starting parameters. Not used here.}
   \item{tryAutoCorr}{set to FALSE to not try to fit model with autocorrelation}
 }
