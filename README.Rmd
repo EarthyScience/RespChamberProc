@@ -59,8 +59,7 @@ light chamber) in units micromol/second from CO2 concentration data in ppm.
 library(RespChamberProc)
 #?RespChamberProc
 
-data(chamberLoggerEx1s)
-ds <- chamberLoggerEx1s
+ds <- chamberLoggerEx1s               # example data with the package
 ds$Pa <- chamberLoggerEx1s$Pa * 1000  # convert kPa to Pa
 ds$CO2_dry <- corrConcDilution(ds)    # correct for water vapour
 resFit <- calcClosedChamberFlux(

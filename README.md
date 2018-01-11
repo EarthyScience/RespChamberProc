@@ -43,8 +43,7 @@ A simple example estimates photosynthesis (negative CO2 flux into the light cham
 library(RespChamberProc)
 #?RespChamberProc
 
-data(chamberLoggerEx1s)
-ds <- chamberLoggerEx1s
+ds <- chamberLoggerEx1s               # example data with the package
 ds$Pa <- chamberLoggerEx1s$Pa * 1000  # convert kPa to Pa
 ds$CO2_dry <- corrConcDilution(ds)    # correct for water vapour
 resFit <- calcClosedChamberFlux(

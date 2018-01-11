@@ -66,7 +66,7 @@ res$CO2_fluxA <-  res$CO2_flux / (0.6*0.6)
 res$CO2_fluxA_sd <-  res$CO2_flux_sd / (0.6*0.6)
 res
 
-data(collarCodes)
+#data(collarCodes)
 res2  <- merge(res, collarCodes)
 
 #write.csv(res2,paste(fileName,"_results.csv",sep=""))

@@ -25,7 +25,7 @@ calcClosedChamberFluxForChunks <- function(
     if (length(iMissingCol) ) stop(
       "Missing columns in dataframe of argument volumesByChunk: "
       , paste(requiredColumnNames[iMissingCol], collapse = ","))
-    if (max(table(volumesByChunk[[colChunk]])) > 1L ) stop(
+    if (max(table(volumesByChunk[[colChunk]])) > 1L) stop(
       "values in column ", colChunk, " in volumesByChunk must be unique.")
     dsVol <- suppressWarnings(
       left_join(

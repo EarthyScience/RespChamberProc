@@ -188,9 +188,9 @@ attr( .plotCampaignConcSeries, "ex") <- function(){
 	)
 	.tmp.f <- function(){
 		#inspect single series
-		data(collarCodes)
+		#data(collarCodes)
 		idi <- "5.1.18"
-		dss <- merge( subset(ds, id==idi), collarCodes )
+		dss <- merge( subset(ds, id == idi), collarCodes )
 		head(dss,5)
 		plotResp(dss)
 		grid(12)

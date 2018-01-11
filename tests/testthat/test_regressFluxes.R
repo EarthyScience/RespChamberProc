@@ -1,7 +1,7 @@
 #require(testthat)
 context("regressFluxes")
 
-data(chamberLoggerEx1s, package="RespChamberProc")		# does not work with RCMDCheck and testthat
+#data(chamberLoggerEx1s, package="RespChamberProc")		# does not work with RCMDCheck and testthat
 ds <- chamberLoggerEx1s[-(1:16),]
 conc <- ds$CO2_dry <- corrConcDilution(ds)
 times <- ds$TIMESTAMP
