@@ -31,7 +31,7 @@ devtools::install_github("bgctw/logitnorm")
 Usage
 -----
 
-See the [package vignettes](tree/maser/vignettes) for an introduction.
+See the [package vignettes](../../tree/master/vignettes) for an introduction.
 
 A simple example estimates photosynthesis (negative CO2 flux into the light chamber) in units micromol/second from CO2 concentration data in ppm.
 
@@ -47,9 +47,11 @@ resFit <- calcClosedChamberFlux(
   , colTemp = "TA_Avg", colPressure = "Pa"  # Temperature in K, Pressure in Pa
   , volume = 1, area = 1                    # chamber dimensions m3 and m2
 )
-resFit$stat[c("flux","sdFlux")]
-#> Warning: Unknown or uninitialised column: 'stat'.
-#> NULL
+dplyr::select(resFit ,c("flux","sdFlux"))
+#> # A tibble: 1 x 2
+#>        flux    sdFlux
+#>       <dbl>     <dbl>
+#> 1 -3.534767 0.7084692
 plotResp(ds, resFit, label = "Example Series")
 ```
 
