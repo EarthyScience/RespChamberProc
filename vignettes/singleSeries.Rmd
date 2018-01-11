@@ -55,9 +55,8 @@ chamber measurement cycle. For timestamps spaced about every second, the
 sensor readings from CO2 concentration in ppm, vater vapour in ppm, chamber
 temperaturein degree Celsius and air pressure, here in kPa are recorded.
 
-```{r, spar = TRUE}
-data(chamberLoggerEx1s, package = "RespChamberProc")
-ds <- chamberLoggerEx1s
+```{r concPlot, spar = TRUE}
+ds <- chamberLoggerEx1s  # dataset lazyload from package
 head(ds)
 plot( CO2_Avg ~ TIMESTAMP, ds, ylab = "CO2 (ppm)", xlab = "time (Minute:Second)")
 ```
@@ -137,7 +136,7 @@ convert_mumolPers_to_gPerday(fluxInMuMol)
 
 
 The results can be visualized in a plot:
-```{r , spar = TRUE}
+```{r fittedPlot, spar = TRUE}
 plotResp(ds, resFit, label = "Example Series")		
 ```
 

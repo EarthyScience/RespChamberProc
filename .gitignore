@@ -15,8 +15,9 @@
 vignettes/*.html
 vignettes/*.pdf
 #vignettes/*.md  # put to github to view there
-vignettes/*files/
-/vignettes/figure/
+#vignettes/*files/ # put to github to view there
+# knit::knit puts to figure, but render with rmarkdown::render to *files
+/vignettes/figure/ 
 # inst/doc
 inst/doc/
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3

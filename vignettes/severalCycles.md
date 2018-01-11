@@ -38,7 +38,7 @@ head(ds)
 plot( CO2_LI840 ~ TIMESTAMP, ds, ylab = "CO2 (ppm)", xlab = "Time")
 ```
 
-![](severalCycles_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](severalCycles_files/figure-html/concAllPlot-1.png)<!-- -->
 
 ```
 ## # A tibble: 6 x 17
@@ -62,7 +62,7 @@ First, we correct the pressure to standard units and correct the CO2
 concentrations for water vapour.
 
 ```r
-ds$Pa <- ds0$AirPres * 100  # convert hPa to Pa
+ds$Pa <- ds$AirPres * 100  # convert hPa to Pa
 ds$CO2_dry <- corrConcDilution(ds, colConc = "CO2_LI840", colVapour = "H2O_LI840")
 ds$H2O_dry <- corrConcDilution(ds, colConc = "H2O_LI840", colVapour = "H2O_LI840")
 ds$VPD <- calcVPD( ds$SurTemp, ds$Pa, ds$H2O_LI840)
@@ -103,7 +103,7 @@ dss <- subset(dsChunk, iChunk == 15)
 plot( CO2_dry ~ TIMESTAMP, dss, ylab = "CO2 (ppm)", xlab = "time (Minute:Second)")
 ```
 
-![](severalCycles_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](severalCycles_files/figure-html/concSinglePlot-1.png)<!-- -->
 
 Computing the flux
 ------------------
@@ -157,7 +157,7 @@ plots <- plotCampaignConcSeries( dsChunk20, resChunks1, plotsPerPage = 64L)
 print(plots$plot[[1]]) # print the first page
 ```
 
-![](severalCycles_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+![](severalCycles_files/figure-html/fittedPlots-1.png)<!-- -->
 
 If argument `fileName` is provided to `plotCampaignConcSeries`. All plots are
 written to a pdf. If there are more cycles, i.e. plots, than argument 

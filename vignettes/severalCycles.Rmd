@@ -48,7 +48,7 @@ Determine subsets of single measurment cycles
 ----------------------------------------------
 
 First, the data is loaded. Here, directly from zipped logger-output.
-```{r, spar = TRUE, fig.width = 12}
+```{r concAllPlot, spar = TRUE, fig.width = 12}
 fName <- system.file(
   "genData/SMANIE_Chamber1_26032015.zip", package = "RespChamberProc")
 if (nzchar(fName) ) { 
@@ -82,7 +82,7 @@ head(dsChunk)
 The new modified contains a new variable, `iChunk`, holding a factor that
 changes with different measurment cycles.
 This factor can be used to select subset of single measurement cycles. 
-```{r , spar = TRUE}
+```{r concSinglePlot, spar = TRUE}
 dss <- subset(dsChunk, iChunk == 15)
 plot( CO2_dry ~ TIMESTAMP, dss, ylab = "CO2 (ppm)", xlab = "time (Minute:Second)")
 ```
@@ -115,7 +115,7 @@ several rows identified by additional key column iChunk.
 
 ## Plotting faceted data and fits
 Plot the results to dectect problems. 
-```{r, spar = TRUE, fig.width = 11, fig.height = 6, warning = FALSE, message = FALSE}
+```{r fittedPlots, spar = TRUE, fig.width = 11, fig.height = 6, warning = FALSE, message = FALSE}
 library(ggplot2)
 plots <- plotCampaignConcSeries( dsChunk20, resChunks1, plotsPerPage = 64L)  
 print(plots$plot[[1]]) # print the first page
