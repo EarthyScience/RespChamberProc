@@ -16,17 +16,21 @@ Overview
 
 `RespChamberProc` package supports deriving gas fluxes from a time series of gas concentrations in a chamber.
 
-<!-- 
-## Installation
+Installation
+------------
 
-```r
+``` r
 # From CRAN
 install.packages("logitnorm")
 
 # Or the the development version from GitHub:
+install.packages( # dependencies from CRAN
+  c("rlang", "changepoint", "nlme", "segmented", "tibble",  "dplyr", "purrr"))
 # install.packages("devtools")
-devtools::install_github("bgctw/logitnorm")
+devtools::install_github("bgctw/RespChamberProc")
 ```
+
+<!-- 
 -->
 Usage
 -----
@@ -37,6 +41,8 @@ A simple example estimates photosynthesis (negative CO2 flux into the light cham
 
 ``` r
 library(RespChamberProc)
+#?RespChamberProc
+
 data(chamberLoggerEx1s)
 ds <- chamberLoggerEx1s
 ds$Pa <- chamberLoggerEx1s$Pa * 1000  # convert kPa to Pa
