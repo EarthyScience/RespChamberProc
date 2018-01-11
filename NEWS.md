@@ -1,13 +1,14 @@
+# RespChamberProc 0.6.4
+
+* checking function arguments
+* moved tests to testthat
+
 # RespChamberProc 0.6.2
 
-added geometry functions
-
-fixed support of tibbles in plotResp
-
-argument useFixedTLag to specify fixed lag-Time instead of estimating it from the data
-
-specification of different volumes by chunk more robust
-
+* added geometry functions
+* fixed support of tibbles in plotResp
+* argument useFixedTLag to specify fixed lag-Time instead of estimating it from the data
+* specification of different volumes by chunk more robust
 
 # RespChamberProc 0.6.1
 
