@@ -41,6 +41,7 @@ Working with a time series of several measurement cycles (see vignette) \itemize
 \item{ Plotting all time series and fits: \code{\link{plotCampaignConcSeries}} }
 }%itemize
 
+Also have a look at the \href{../doc/index.html}{package vignettes}.
 }%details
 
 \author{Thomas Wutzler, Oscar Perez Priego}
