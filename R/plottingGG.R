@@ -62,7 +62,8 @@ plotCampaignConcSeries <- function(
       #ggplot2::theme(panel.grid.minor = element_blank())
       ggplot2::theme(panel.grid = ggplot2::element_blank())
     if (length(dsFits)) {
-      dsFitsPage <- filter_(dsFits, lazyeval::interp(~colChunk %in% idsPage, colChunk = as.name(colChunk)))
+      #dsFitsPage <- filter_(dsFits, lazyeval::interp(~colChunk %in% idsPage, colChunk = as.name(colChunk)))
+      dsFitsPage <- filter(dsFits, UQ(sym(colChunk)) %in% !!idsPage)
       dsFitsPage$id <- dsFitsPage[[colChunk]]
       #. <- unlist(filter_(dsFitsPage, ~iChunk==4 ), recursive  = FALSE)
       # rowwise coerces a one-row tibble to a list, with list columns expanded
