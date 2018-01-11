@@ -16,3 +16,4 @@ RespChamberProc.Rproj
 ^cranComments.md$
 
 ^.*\.Rproj$
+^\.travis\.yml$
