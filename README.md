@@ -9,7 +9,11 @@ maybe clear cache before
 
 <!-- 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/REddyProc)](http://cran.r-project.org/package=REddyProc)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/logitnorm)](http://cran.r-project.org/package=logitnorm)
+
+# From CRAN
+install.packages("logitnorm")
+
+# Or the the development version from GitHub:
 -->
 Overview
 --------
@@ -20,10 +24,6 @@ Installation
 ------------
 
 ``` r
-# From CRAN
-install.packages("logitnorm")
-
-# Or the the development version from GitHub:
 install.packages( # dependencies from CRAN
   c("rlang", "changepoint", "nlme", "segmented", "tibble",  "dplyr", "purrr"))
 # install.packages("devtools")
