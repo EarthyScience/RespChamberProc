@@ -25,7 +25,15 @@ calcClosedChamberFluxForChunks <- function(
     if (length(iMissingCol) ) stop(
       "Missing columns in dataframe of argument volumesByChunk: "
       , paste(requiredColumnNames[iMissingCol], collapse = ","))
-    dsVol <- suppressWarnings(left_join(ds, volumesByChunk, colChunk))
+    if (max(table(volumesByChunk[[colChunk]])) > 1L ) stop(
+      "values in column ", colChunk, " in volumesByChunk must be unique.")
+    dsVol <- suppressWarnings(
+      left_join(
+        ds
+        , select(volumesByChunk, !!!syms(c(colChunk, "volume")))
+        , colChunk))
+    if (nrow(dsVol) != nrow(ds)) stop(
+      "could not assign unique volumes to chunks.")
     if (!all(is.finite(dsVol$volume)) ) {
       chunksMissing <- unique(dsVol[[colChunk]][ !is.finite(dsVol$volume)])
       stop("need to provide a finite volume for each chunk. Check chunks "
