@@ -5,9 +5,11 @@
 \usage{convert_mumolPers_to_gPerday(flux, molarMass = 12.011)}
 \arguments{
   \item{flux}{numeric vector or array: flux}
-  \item{molarMass}{numeric scalar: the molar mass of the element of interest (default carbon) in g/mol}
+  \item{molarMass}{numeric scalar: the molar mass of the element
+of interest (default carbon) in g/mol}
 }
-\details{Concentration measures are usually given by micromol CO2 across several seconds, and
+\details{Concentration measures are usually given by micromol CO2 across several 
+seconds, and
 the flux, i.e. its slope hence given in micromol CO2 per second.
 To compare carbon balances, the units of gC per day are more convenient.  
 
