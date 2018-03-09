@@ -269,7 +269,7 @@ selectDataAfterLag <- function(
 ){
 	ds <- as_tibble(ds)
 	##seealso<< \code{\link{RespChamberProc}}
-  	maxLagConstrained <- min(maxLag, nrow(ds))
+  maxLagConstrained <- min(maxLag, nrow(ds))
 	times <- as.numeric(ds[[colTime]])[1:maxLagConstrained]
 	times0 <- times - times[1]
 	if (length(tLagFixed) && is.finite(tLagFixed)) {
@@ -286,17 +286,17 @@ selectDataAfterLag <- function(
 		iBreak <- iBreakMin <- min(which( times0 >= minTLag ))	
 		obs <- ds[[colConc]][1:maxLagConstrained]
 		lm0 <- lm(obs ~ times0)
-	    o <- try( segmented(lm0, seg.Z =  ~times0
-					,psi = list(times0 = tLagInitial)
-					,control = seg.control(display = FALSE)
-			), silent = TRUE)
-			#plot( obs ~ times0 );  lines(fitted(o) ~ times0, col = "red", lines(fitted(lm0)~times0))
-	    if (inherits(o,"try-error")) {
-	      # if there is no breakpoint, an error with this the 
-	      # following message is thrown
-	      # in this case keep the iBreak = 1
-	      if (!length(grep("at the boundary or too close",o)) ) stop(o)
-	    }
+    o <- try( segmented(lm0, seg.Z =  ~times0
+				,psi = list(times0 = tLagInitial)
+				,control = seg.control(display = FALSE)
+		), silent = TRUE)
+		#plot( obs ~ times0 );  lines(fitted(o) ~ times0, col = "red", lines(fitted(lm0)~times0))
+    if (inherits(o,"try-error")) {
+      # if there is no breakpoint, an error with this the 
+      # following message is thrown
+      # in this case keep the iBreak = 1
+      if (!length(grep("at the boundary",o)) ) stop(o)
+    }
 		if (!inherits(o,"try-error") && AIC(o) < AIC(lm0) ) {
 			iBreak <- min(which(times0 >= o$psi[1,2] ))
 		}
