@@ -117,8 +117,8 @@ calcClosedChamberFlux <- function(
 		        , "to the concentration dataset")
 		if (isTRUE(debugInfo$isStopOnError)) stop(msg) else warning(msg)
 		res <- retEmpty
-		res$stat["tLag"] <- tLag		              ##<< time of lag phase in seconds
-		res$stat["lagIndex"] <- dslRes$lagIndex 
+		res["tLag"] <- tLag		              ##<< time of lag phase in seconds
+		res["lagIndex"] <- dslRes$lagIndex 
 		return(res)
 	}
 	fReg <- fRegress[[iBest]]
