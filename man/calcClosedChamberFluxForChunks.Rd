@@ -19,7 +19,7 @@ Allows for adjusting the chamber volume across different chunks
   \item{isVerbose}{set to FALSE to avoid messages}
 }
 
-\value{a tibble with a row for each measurement cycle and additonal 
+\value{a tibble with a row for each measurement cycle and additional 
 column <colChunk> identifying the measurement cycle}
 
 \author{Thomas Wutzler, Oscar Perez Priego}

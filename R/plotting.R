@@ -10,13 +10,15 @@ plotResp <- function(
 ){
 	times <- dsi[[colTime]] 
 	times0 <- as.numeric(times) - as.numeric(times[1])
-	plot( dsi[[colConc]] ~ times0, xlab=xlab, ylab="" )
+	plot( dsi[[colConc]] ~ times0, xlab=xlab, ylab="", col = "gray" )
 	mtext(ylab, 2, las=0, 2.3)
 	fluxText <- ""
 	if( length(resFlux) ){
 		tLag <- resFlux$tLag
 		abline( v=tLag, lty="dotted", col="grey" )
-		lines( fitted(resFlux$model[[1]]) ~ I(times0[times0 >= tLag]) )
+		#lines( fitted(resFlux$model[[resFlux$iFRegress]]) ~ I(times0[times0 >= tLag]) )
+		# only one model provided
+		lines( fitted(resFlux$model[[1L]]) ~ I(times0[times0 >= tLag]), col = "blue" )
 		prec=	ceiling(max(0, -log10(resFlux$sdFlux) ))
 		fluxText <- paste( round(resFlux$flux, prec), " \u00B1", round(resFlux$sdFlux, prec),sep="")
 	}

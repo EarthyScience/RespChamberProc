@@ -100,7 +100,7 @@ chamberVol = 0.6*0.6*0.6		# chamber was a cube of 0.6m length
 surfaceArea = 0.6*0.6
 
 resChunks1 <- calcClosedChamberFluxForChunks(
-  dsChunk20, colTemp = "T_LI840"
+  dsChunk20, colTemp = "AirTemp"
   # linear and saturating shape
   , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)	
   , debugInfo = list(omitEstimateLeverage = TRUE)	# faster
@@ -144,7 +144,7 @@ table(resChunks1$tLag)
 We infer that for this campaign a lag-time of about 15 seconds is appropriate.
 
 One can save processing time and avoid breakpoint-detection failures by specifying
-a fixed lag-time during the concentration fitting by parameter `tLagFixed`.
+a fixed lag-time during the concentration fitting by parameter `useFixedTLag`.
 ```{r}
 resChunks2 <- calcClosedChamberFluxForChunks(
   dsChunk20, colTemp = "T_LI840"
@@ -153,7 +153,7 @@ resChunks2 <- calcClosedChamberFluxForChunks(
   , debugInfo = list(omitEstimateLeverage = TRUE)	# faster
   , volume = chamberVol
   , area = surfaceArea
-  , tLagFixed = 15
+  , useFixedTLag = 15
 )
 head(resChunks2)
 ```

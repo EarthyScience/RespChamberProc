@@ -110,7 +110,8 @@ calcClosedChamberFlux <- function(
 	fluxEstL <- lapply( fRegress, function(fReg){	
 		fluxEst <- fReg( conc ,  times, tryAutoCorr = !isTRUE(debugInfo$omitAutoCorrFit) )
 	})
-	#plot(conc ~ times); lines(fitted(fluxEst$model) ~ times)
+	#plot(conc ~ times); lines(fitted(fluxEstL[[1]]$model) ~ times, col = "blue"); 
+	#lines(fitted(fluxEstL[[2]]$model) ~ times, col = "red");
 	iBest <- fRegressSelect(fluxEstL)
 	if (!length(iBest)) {
 		msg <- paste0("calcClosedChamberFlux: could not fit any of the specified functions "
@@ -502,7 +503,8 @@ regressFluxExp <- function(
 	## The exponential form, is more consistent with a theoretical model of 
 	## saturating flux (Kutzbach 2006).
 	#
-	timesSec <- as.numeric(times) - as.numeric(times[1])
+  functionName <- "regressFluxExp" # debugging
+  timesSec <- as.numeric(times) - as.numeric(times[1])
 	#plot( conc ~ timesSec )
 	fluxLin <- coefficients(lm(conc ~ timesSec ))[2]
 	if (!length(start)) {
@@ -535,6 +537,7 @@ regressFluxExp <- function(
 					,correlation = NULL
 			)
 	, silent = TRUE)
+	if (!length(nlm1)) stop("encountered null nlm1")
 	nlm1Auto <- if (!isTRUE(tryAutoCorr) || inherits(nlm1,"try-error")) nlm1 else 
 	    try(
 						#tmp <- update(nlm1, correlation = corAR1( 0.3, form = ~ timesSec) )
@@ -543,6 +546,7 @@ regressFluxExp <- function(
 							,control = gnlsControl(nlsTol = 0.01)	
 						)
 			, silent = TRUE)
+	if (!length(nlm1Auto)) stop("encountered null nlm1Auto")
 	#plot( conc ~ timesSec )
 	#lines( I(a0*exp(-b0*timesSec) + cSat0) ~ timesSec, col = "maroon"  ) 
 	#lines( fitted(nlm1) ~ timesSec, col = "blue"  ) 
@@ -607,6 +611,7 @@ regressFluxTanh <- function(
 	##details<< 
 	## For efficiency reasons, does not check for missing values (NA).
 	## The caller must provide conc and times all finite.
+	#functionName <- "regressFluxTanh" # debugging
 	timesSec <- as.numeric(times) - as.numeric(times[1])
 	fluxLin <- coefficients(lm(conc ~ timesSec ))[2]
 	if (!length(start)) {
@@ -636,30 +641,51 @@ regressFluxTanh <- function(
 	# http://www.r-bloggers.com/a-better-nls/
 	concOut <- conc[-1]
 	timesSecOut <- timesSec[-1]
+	# sometimes return NULL instead of an error, need to transform to error
 	if (fluxLin > 0) {
-		nlm1 <- nlmNoOut <- try(suppressWarnings(gnls( conc ~   (tanh(timesSec*s/c0)-1)*c0 + cSat 
-			,start = if (length(start)) start else list(s = s0, cSat = cSat0, c0 = c00)
-			,params =  c(s+cSat+c0~1)
-			,correlation = NULL
-		)), silent = TRUE)
-		# fit without the first obs
-		nlmOut <- try(suppressWarnings(gnls( concOut ~ (tanh(timesSecOut*s/c0)-1)*c0 + cSat 
-						,start = if (length(start)) start else list(s = s0, cSat = cSat0, c0 = c00)
-						,params =  c(s+cSat+c0~1)
-						,correlation = NULL
-				)), silent = TRUE) 
+	  nlm1 <- nlmNoOut <- try({
+	    tmp <- suppressWarnings(gnls( 
+	      conc ~   (tanh(timesSec*s/c0)-1)*c0 + cSat 
+	      ,start = if (length(start)) start else list(s = s0, cSat = cSat0, c0 = c00)
+	      ,params =  c(s+cSat+c0~1)
+	      ,correlation = NULL
+	    ))
+	    if (is.null(tmp)) stop("could not fit tanh model")
+	    tmp
+	  }, silent = TRUE)
+	  # fit without the first obs
+	  nlmOut <- try({
+	    tmp <- suppressWarnings(gnls( 
+	      concOut ~ (tanh(timesSecOut*s/c0)-1)*c0 + cSat 
+	      ,start = if (length(start)) start else list(s = s0, cSat = cSat0, c0 = c00)
+	      ,params =  c(s+cSat+c0~1)
+	      ,correlation = NULL
+	    ))
+	    if (is.null(tmp)) stop("could not fit tanh model")
+	    tmp
+	  }, silent = TRUE) 
 	} else {
-		nlm1 <- nlmNoOut <- try(suppressWarnings(gnls( conc ~  (tanh(timesSec*s/c0)+1)*c0 - cSat
-			,start = if (length(start)) start else list(s = -s0, cSat  =  cSat0, c0 = c00)
-			,params =  c(s+cSat+c0~1)
-			,correlation = NULL
-		)), silent = TRUE)
-		# fit without the first obs
-		nlmOut <- try(suppressWarnings(gnls( concOut ~  (tanh(timesSecOut*s/c0)+1)*c0 - cSat
-				,start = if (length(start)) start else list(s = -s0, cSat = cSat0, c0 = c00)
-				,params =  c(s+cSat+c0~1)
-				,correlation = NULL
-		)), silent = TRUE)
+	  nlm1 <- nlmNoOut <- try({
+	    tmp <- suppressWarnings(gnls( 
+	      conc ~  (tanh(timesSec*s/c0)+1)*c0 - cSat
+	      ,start = if (length(start)) start else list(s = -s0, cSat  =  cSat0, c0 = c00)
+	      ,params =  c(s+cSat+c0~1)
+	      ,correlation = NULL
+	    ))
+	    if (is.null(tmp)) stop("could not fit tanh model")
+	    tmp
+	  }, silent = TRUE)
+	  # fit without the first obs
+	  nlmOut <- try({
+	    tmp <- suppressWarnings(gnls( 
+	      concOut ~  (tanh(timesSecOut*s/c0)+1)*c0 - cSat
+	      ,start = if (length(start)) start else list(s = -s0, cSat = cSat0, c0 = c00)
+	      ,params =  c(s+cSat+c0~1)
+	      ,correlation = NULL
+	    ))
+	    if (is.null(tmp)) stop("could not fit tanh model")
+	    tmp
+	  }, silent = TRUE)
 	}
 	##detail<< 
 	## The tanh fit is very prone to a very low first records. Hence also try 
