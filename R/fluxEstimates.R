@@ -287,8 +287,9 @@ selectDataAfterLag <- function(
 		obs <- ds[[colConc]][1:maxLagConstrained]
 		lm0 <- lm(obs ~ times0)
     o <- try( segmented(lm0, seg.Z =  ~times0
-				,psi = list(times0 = tLagInitial)
-				,control = seg.control(display = FALSE)
+        # initial estimate has to be inside the interval                
+				, psi = list(times0 = min(tLagInitial, times0[length(times0) - 1L]))
+				, control = seg.control(display = FALSE)
 		), silent = TRUE)
 		#plot( obs ~ times0 );  lines(fitted(o) ~ times0, col = "red", lines(fitted(lm0)~times0))
     if (inherits(o,"try-error")) {
