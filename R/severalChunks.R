@@ -48,7 +48,7 @@ calcClosedChamberFluxForChunks <- function(
             calcClosedChamberFlux(.,...,volume = vol)
           })
   names(ans)[names(ans) == "iChunk"] <- colChunk
-  ##value<< a tibble with a row for each measurement cycle and additonal 
+  ##value<< a tibble with a row for each measurement cycle and additional 
   ## column <colChunk> identifying the measurement cycle
   ans
 }
