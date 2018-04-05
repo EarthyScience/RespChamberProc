@@ -15,7 +15,7 @@ before column information}
   \item{nRowsColInfo}{integer vector: number of lines
 with column description}
   \item{sep}{column separator}
-  \item{\dots}{further arguments to}
+  \item{\dots}{further arguments to \code{link{read.table}}}
   \item{colClasses}{see \code{link{read.table}}}
   \item{colsTimeStamp}{integer vector: colums with time stamp column
 (will be set to POSIXct}
@@ -33,7 +33,7 @@ Closed connections are closed on exit of the function.}
 
 
 
-
+\seealso{\code{\link{read81xVar}}}
 \examples{
 fName <- system.file(
   "genData/chamberLoggerEx1_short.dat", package = "RespChamberProc")

@@ -7,7 +7,7 @@ readDat <- function(
 	, nRowsColInfo = 2		##<< integer vector: number of lines 
 	  ## with column description
 	, sep = ","				    ##<< column separator
-	, ...					        ##<< further arguments to
+	, ...					        ##<< further arguments to \code{link{read.table}}
 	, colClasses = rep(NA, ncol(colInfo))	##<< see \code{link{read.table}}
 	, colsTimeStamp = 1		##<< integer vector: colums with time stamp column 
 	  ## (will be set to POSIXct
@@ -17,6 +17,7 @@ readDat <- function(
 	  ## default: current local e.g CET, UTC
 	, na.strings = c('','NA','NAN','"NAN"')  ##<< see \code{link{read.table}}
 ){
+  ##seealso<< \code{\link{read81xVar}}
   # cannot put "%" in declaration with inlinedocs
 	if (!length(formatTS) ) formatTS <- "%Y-%m-%d %H:%M:%S"	
 	setClass("myDate", where = globalenv())
@@ -80,15 +81,19 @@ read81x <- function(
 		, formatTS = NULL			  ##<< format of the timestamp columns, 
 		  ## see \code{\link{strptime}}
 		, tz = "UTC"				    ##<< specify a time zone when converting to POSIXct, 
-		  ## default: current local e.g CET, UTC
+		  ## default: UTC
 		, na.strings = c('','NA','NAN','"NAN"') ##<< see \code{link{read.table}}
 		, labelRowOffset = -16	##<< the row offset, usually before concentration 
 		  ## measurements to generate column \code{label}
 ){
 	##details<< 
-	## version of \code{\link{readDat}} with adjusted defaults
+	## version of \code{\link{readDat}} with adjusted defaults.
+	## 
+	## This function is deprecated because its superseeded by the 
+	## more versatile \code{\link{read81xVar}}.
 	#
 	# find the beginning of data blocks and of summary information
+	message("read81x is deprecated. Please use function read81xVar")
 	if (!length(formatTS) ) formatTS <- "%Y-%m-%d %H:%M:%S"
 	lines <- readLines(fName)
 	blockStarts <- grep("^Type", lines)				# starts of data blocks
@@ -138,6 +143,97 @@ attr(read81x,"ex") <- function(){
 	}
 }
 
+read81xVar <- function(
+  ### Read a Licor generated .x81 file into a data-frame with guessing initial rows		
+  fName					          ##<< scalar string: file name
+  ## file information
+  , sep = "\t"				    ##<< column separator
+  , ...					          ##<< further arguments to \code{\link{read.table}}
+  , colsTimeStamp = 3		  ##<< integer vector: colums with time stamp column 
+  ## (will be set to POSIXct)
+  , formatTS = NULL			  ##<< format of the timestamp columns, 
+  ## see \code{\link{strptime}}
+  , tz = "UTC"				    ##<< specify a time zone when converting to POSIXct, 
+  ## default: UTC
+  , na.strings = c('','NA','NAN','"NAN"') ##<< see \code{\link{read.table}}
+  , labelID = "Label:"    ##<< string at the start of lines indicating the label
+){
+  ##seealos<< \code{\link{readDat}} 
+  # find the beginning of data blocks and of summary information
+  if (!length(formatTS) ) formatTS <- "%Y-%m-%d %H:%M:%S"
+  lines <- readLines(fName)
+  blockStarts0 <- grep("^Type", lines)				# starts of data blocks
+  # in order to select chunks until next block, set end of the file as blockstart
+  blockStarts <- c(blockStarts0, length(lines) + 1L) 
+  # starts of summary blocks (after each data block) 
+  #summaryStarts <- grep("^CrvFitStatus", lines)	
+  setClass("myDate", where = globalenv())
+  setAs("character","myDate", function(from) 
+    as.POSIXct(from, format = formatTS, tz = tz), where = globalenv() )
+  iChunk <- 94
+  # The format may change between blocks, so
+  # read the column names of each chunk
+  # find the label by "Label:"
+  resBlocks <- lapply( seq_along(blockStarts0), function(iChunk){
+    blockStart <- blockStarts[iChunk]
+    # read the label from above the info lines above the chunk
+    fileInfoLines <- lines[blockStart - min(blockStart,50L):1]
+    labelLines <- grep(paste0("^",labelID),fileInfoLines,value = TRUE)
+    label <- if (length(labelLines)) {
+      trimws(substr(labelLines[length(labelLines)], nchar(labelID) + 1, nchar(labelLines[1])))
+    } else {
+      as.character(iChunk)
+    }
+    # read the colum names
+    namesLine <- lines[blockStarts[iChunk]]
+    colNamesChunk0 <- unlist(read.table(
+      textConnection(namesLine)
+      , header = FALSE, nrows = 1, sep = sep, na.strings = na.strings
+      , stringsAsFactors = FALSE))
+    # workaround add some dummy columns, because there may be more data columns than column names
+    colNamesChunk <- c(colNamesChunk0, paste0("dummy",1:5))
+    colClasses = rep(NA, length(colNamesChunk))	##<< see \code{link{read.table}}	
+    colClasses[colsTimeStamp] <- "myDate"
+    #
+    # determine the end of the block
+    # search for the first line that starts with <ID>: with id having no tab char
+    # in lines of before the next blockstart
+    sumStarts <- grep("^[^\t]*:", lines[blockStart:(blockStarts[iChunk + 1L] - 1L)])
+    sumStart <- if (length(sumStarts)) sumStarts[1] else blockStarts[iChunk + 1L]
+    # remove a row that was not finished because of restart
+    if (length(grep("The measurement was restarted", lines[blockStarts[iChunk] + sumStart - 2])))
+      sumStart <- sumStart - 1
+    if (sumStart <= 2) return(NULL) # only header row
+    rawData <- read.table(
+      textConnection(lines[blockStarts[iChunk] + 1L:(sumStart - 2L)])
+      , header = FALSE, sep = sep, na.strings = na.strings
+      , col.names = colNamesChunk
+      , fill = TRUE
+      , ...
+      , colClasses = colClasses
+    )
+    cbind( iChunk = iChunk
+           , rawData[rawData$Type == 1,seq_along(colNamesChunk0)]
+           , label = label )
+  })
+  res <- suppressWarnings(bind_rows( resBlocks ))		
+  as_tibble(res)
+}
+attr(read81xVar,"ex") <- function(){
+  #fName <- "inst/genData/Flux2_140929_1700.81x"
+  #fName <- "inst/genData/Flux2_140929_1700.81x"
+  fName <- system.file(
+    "genData/Flux2_140929_1700.81x", package = "RespChamberProc")
+  if (nzchar(fName)) {
+    ds <- read81xVar(fName)
+    #plot( CO2 ~ Date, ds )
+    #plot( CO2 ~ Date, ds[ds$iChunk == 9,] )
+  }
+}
+
+.tmp.f <- function(){
+  headLines <- c("something: a,  b ak","Label: myLabel","other: stuff","Type")
+}
 
 
 subsetContiguous <- function(

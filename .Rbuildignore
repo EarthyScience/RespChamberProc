@@ -9,6 +9,7 @@ RespChamberProc.Rproj
 ^vignettes/figure/.*$
 ^vignettes/cache/.*$	
 ^scratch$
+^develop$
 ^tmp$
 ^.git$
 ^.gitignore$

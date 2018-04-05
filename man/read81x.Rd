@@ -17,12 +17,15 @@ file information}
   \item{formatTS}{format of the timestamp columns,
 see \code{\link{strptime}}}
   \item{tz}{specify a time zone when converting to POSIXct,
-default: current local e.g CET, UTC}
+default: UTC}
   \item{na.strings}{see \code{link{read.table}}}
   \item{labelRowOffset}{the row offset, usually before concentration
 measurements to generate column \code{label}}
 }
-\details{version of \code{\link{readDat}} with adjusted defaults}
+\details{version of \code{\link{readDat}} with adjusted defaults.
+
+This function is deprecated because its superseeded by the 
+more versatile \code{\link{read81xVar}}.}
 
 
 \author{Thomas Wutzler, Oscar Perez Priego}
