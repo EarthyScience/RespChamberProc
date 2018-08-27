@@ -66,6 +66,19 @@ calcClosedChamberFlux <- function(
 	## Fit an expoenential curve by using function \code{\link{regressFluxExp}}.
 	#
 	#plot( ds[[colConc] ~ ds[[colTime] )
+	retEntries <- c("flux", "fluxMedian", "sdFlux", "tLag", "lagIndex", "autoCorr"
+	                , "AIC", "sdFluxRegression", "sdFluxLeverage", "iFRegress", "sdResid"
+	                , "iqrResid", "r2")
+	retEmpty <- as_tibble( t(structure(rep(NA_real_, length(retEntries))
+	                                   , names = retEntries )))
+	retEmpty$model <- list(NULL)  # empty list column
+	retEmpty$times <- list(NULL)  # empty list column
+	#
+	if (diff(range(ds[[colConc]])) < 1e-8){
+	  warning("Encountered numerically equal concentrations: probably broken chamber.")
+	  return(retEmpty)
+	}
+	#
 	if (!length(names(fRegress)) ) names(fRegress) <- 1:length(fRegress)
 	dslRes <- if (isTRUE(debugInfo$useOscarsLagDectect) ) {
 		dslRes <- selectDataAfterLagOscar(ds, colConc = colConc, colTime = colTime
@@ -77,13 +90,6 @@ calcClosedChamberFlux <- function(
 	dsl <- dslRes$ds
 	# constrain to finite records for fitting
 	dsl <- dsl[ is.finite(dsl[[colConc]]) & is.finite(dsl[[colTime]]),,drop = FALSE]
-	retEntries <- c("flux", "fluxMedian", "sdFlux", "tLag", "lagIndex", "autoCorr"
-			, "AIC", "sdFluxRegression", "sdFluxLeverage", "iFRegress", "sdResid"
-			, "iqrResid", "r2")
-	retEmpty <- as_tibble( t(structure(rep(NA_real_, length(retEntries))
-	                                 , names = retEntries )))
-	retEmpty$model <- list(NULL)  # empty list column
-	retEmpty$times <- list(NULL)  # empty list column
 	if (nrow(dsl) < 8L ) return(retEmpty)
 	concRange <- diff( quantile(dsl[[colConc]], c(0.05,0.95), na.rm = TRUE ))
 	if (concRange <= concSensitivity) {

@@ -54,20 +54,20 @@ test_that("zipped file",{
   con <- unz(fName, filename = unzip(fName, list = TRUE)[1,"Name"] )
   ds0 <- readDat(con, tz = "UTC")
   expect_true( nrow(ds0) > 0 )
-  #expect_error( isOpen(con) ) # invalid connection, because closed
+  expect_error( isOpen(con) ) # invalid connection, because closed
   # number of open connections did not change
-  expect_equal( nConn, nrow(showConnections())) 
+  #expect_equal( nConn, nrow(showConnections())) # can fail because parallel
 })
 
-test_that("zipped file",{
+test_that("zipped file with explicit opening connection",{
   fName <- system.file(
     "genData/SMANIE_Chamber1_26032015.zip", package = "RespChamberProc")
   skip_if_not(nzchar(fName))
   con <- unz(fName, filename = unzip(fName, list = TRUE)[1,"Name"] )
-  open(con)
+  open(con) # when explicitly opening, then also need to close connection
   ds0 <- readDat(con, tz = "UTC")
   expect_true( nrow(ds0) > 0 )
-  expect_true( isOpen(con) ) # invalid connection, because closed
+  expect_true( isOpen(con) ) 
   close(con)
 })
 
