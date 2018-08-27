@@ -1,3 +1,8 @@
+
+* detecting special cases in calcClosedChamberFlux
+  * all concentrations numerically equal
+  * no finite concentrations
+
 # RespChamberProc 0.6.4
 
 * checking function arguments in calcClosedChamberFluxForChunks

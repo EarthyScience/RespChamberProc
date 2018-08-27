@@ -74,8 +74,12 @@ calcClosedChamberFlux <- function(
 	retEmpty$model <- list(NULL)  # empty list column
 	retEmpty$times <- list(NULL)  # empty list column
 	#
-	if (diff(range(ds[[colConc]])) < 1e-8){
-	  warning("Encountered numerically equal concentrations: probably broken chamber.")
+	if (!sum(is.finite(ds[[colConc]]))){
+	  warning("Encountered period with no finite concentrations: probably broken chamber.")
+	  return(retEmpty)
+	}
+	if (diff(range(ds[[colConc]], na.rm = TRUE)) < 1e-8){
+	  warning("Encountered all numerically equal concentrations: probably broken chamber.")
 	  return(retEmpty)
 	}
 	#
