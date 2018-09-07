@@ -25,7 +25,8 @@ A second set of functions estimates the flux and its uncertainty from the concen
 \item{ Select the subset of data after lagTime: \code{\link{selectDataAfterLag}}  }
 \item{ Estimate the initial flux by polynomial regression: \code{\link{regressFluxExp}}  }
 \item{ Estimate uncertainty of regression due to leverage of starting and end points: \code{\link{sigmaBootLeverage}}  }
-\item{ Convert from mumol CO2/s to g C/day: \code{\link{convert_mumolPers_to_gPerday}}  }
+\item{ Convert from mumol CO2/s to g C/day: \code{\link{convert_mumolPers_to_gPerday}} 
+and back: \code{\link{convert_gPerday_to_mumolPers}}
 }%itemize
 
 Further misc functionality: \itemize{
