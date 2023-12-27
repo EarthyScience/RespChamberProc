@@ -23,8 +23,8 @@ test_that("x81 annotation",{
 				expect_true( table(ds$iChunk)[1] > 1 )
 				expect_true( "some Comment" %in% ds$Annotation )
 				#table( ds$label )
-				expect_true( all( filter_(ds, ~iChunk==1)$label == "ChunkLabel1" ))
-				expect_true( all( filter_(ds, ~iChunk==2)$label == "ChunkLabel2" ))
+				expect_true( all( filter(ds, iChunk==1)$label == "ChunkLabel1" ))
+				expect_true( all( filter(ds, iChunk==2)$label == "ChunkLabel2" ))
 				#plot( CO2 ~ Date, ds )
 				#plot( CO2 ~ Date, ds[ds$iChunk==9,] )
 			}
@@ -80,5 +80,13 @@ test_that("reading dat file",{
   expect_true( nrow(ds0) > 0 )
   # number of open connections did not change
   expect_equal( nConn, nrow(showConnections())) 
+})
+
+test_that("issue #5",{
+  skip("read file from issue+5 only in develop") # only in develop 
+  fName <- file.path("develop","x81Cases","2312_issue005.81x")
+  ds <- read81xVar(fName)
+  expect_true( max(ds$iChunk) > 1 )
+  expect_true( table(ds$iChunk)[1] > 1 )
 })
 

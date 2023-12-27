@@ -204,8 +204,18 @@ read81xVar <- function(
     if (length(grep("The measurement was restarted", lines[blockStarts[iChunk] + sumStart - 2])))
       sumStart <- sumStart - 1
     if (sumStart <= 2) return(NULL) # only header row
+    # Start by only reading the first column. If row != 1 omit row from parsing
+    lines_chunk <- lines[blockStarts[iChunk] + 1L:(sumStart - 2L)]
+    colClasses1 <- colClasses; colClasses1[2:length(colNamesChunk0)] <- "NULL"
+    col1_data <- suppressWarnings(read.table(
+      textConnection(lines_chunk)
+      , header = FALSE, sep = sep, na.strings = na.strings
+      , fill = TRUE
+      , colClasses = colClasses1
+    ))
+    error_rows = col1_data[1] == -1
     rawData <- read.table(
-      textConnection(lines[blockStarts[iChunk] + 1L:(sumStart - 2L)])
+      textConnection(lines_chunk[!error_rows])
       , header = FALSE, sep = sep, na.strings = na.strings
       , col.names = colNamesChunk
       , fill = TRUE
