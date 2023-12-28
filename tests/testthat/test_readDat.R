@@ -83,8 +83,10 @@ test_that("reading dat file",{
 })
 
 test_that("issue #5",{
-  skip("read file from issue+5 only in develop") # only in develop 
-  fName <- file.path("develop","x81Cases","2312_issue005.81x")
+  #fName <- file.path("develop","x81Cases","2312_issue005_small.81x")
+  fName <- system.file(
+    "genData/2312_issue005_small.81x", package = "RespChamberProc")
+  skip_if_not(nzchar(fName))
   ds <- read81xVar(fName)
   expect_true( max(ds$iChunk) > 1 )
   expect_true( table(ds$iChunk)[1] > 1 )
