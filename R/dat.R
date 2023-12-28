@@ -158,7 +158,14 @@ read81xVar <- function(
   , na.strings = c('','NA','NAN','"NAN"') ##<< see \code{\link{read.table}}
   , labelID = "Label:"    ##<< string at the start of lines indicating the label
 ){
-  ##seealos<< \code{\link{readDat}} 
+  ##seealso<< \code{\link{readDat}} 
+  ##details<< 
+  ## CAUTION: This parses a proprietary format as it was reasonably well working
+  ## at the time of development of the function. The function may skip important 
+  ## meta-information. Further, it may use data-rows that are not meant to be 
+  ## part of the concentration fitting. 
+  ## If you are more familiar with the format, please suggest improvements
+  ## as an issue at the RespChamberProc repository.
   # find the beginning of data blocks and of summary information
   if (!length(formatTS) ) formatTS <- "%Y-%m-%d %H:%M:%S"
   lines <- readLines(fName)
