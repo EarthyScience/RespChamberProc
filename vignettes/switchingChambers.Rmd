@@ -6,12 +6,12 @@ output:
     keep_md: true
 vignette: >
   %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Processing several measurement cycles}
+  %\VignetteIndexEntry{Switching chambers between cycles}
   %\usepackage[UTF-8]{inputenc}
 ---
 
 ```{r setup, include = FALSE}
-# rmarkdown::render("vignettes/severalCycles.Rmd")
+# rmarkdown::render("vignettes/switchingChamber.Rmd")
 library(knitr)
 opts_chunk$set(
     #out.extra = 'style = "display:block; margin: auto"'
@@ -44,22 +44,16 @@ if (!exists("isDevelopMode")) library(RespChamberProc)
 set.seed(0815)      # for reproducible results
 ```
 
-Superseded
-----------
-
-RespChamberProc 0.6.6 associated each chunk with the notion of a collar.
-This allows to specify different chamber setups, importantly volume,
-with different chunks.
-
-Hence, this vignette still works using function `calcClosedChamberFluxForChunks`,
-it is superseded by vignette `switchingChambers` that uses function 
-`calcClosedChamberFluxForChunkSpecs.`
-
 Determine subsets of single measurement cycles
 ----------------------------------------------
 
 First, the data is loaded. Here, directly from zipped logger-output.
 ```{r concAllPlot, spar = TRUE, fig.width = 12}
+library(dplyr)
+# fit chambers in parallel inside calcClosedChamberFluxForChunkSpecs
+library(furrr)
+plan(multisession, workers = 4) 
+
 fName <- system.file(
   "genData/SMANIE_Chamber1_26032015.zip", package = "RespChamberProc")
 if (nzchar(fName) ) { 
@@ -97,26 +91,64 @@ This factor can be used to select subset of single measurement cycles.
 dss <- subset(dsChunk, iChunk == 15)
 plot( CO2_dry ~ TIMESTAMP, dss, ylab = "CO2 (ppm)", xlab = "time (Minute:Second)")
 ```
+Associating Chamber information to chunks
+-----------------------------------------
+Different collars may have different depth leading to different volume, or are
+connected by tubing of different length to the sensor.
+
+The user needs to provide 
+- a mapping of iChunk to collar in column `collar`
+- dimensional information about the collar in a data.frame
+
+Function `subsetContiguous` creates a default for the collar mapping
+by assigning the values of the index column.
+
+```{r}
+dsChunk %>% group_by(iChunk) %>% summarise(collar = first(collar)) %>%  head()
+```
+
+DataFrame `collar_spec` then needs to specify for collar id in column `collar`, 
+the colums `area` (m2) and `volume` (m3) need to be specified,
+as well a column `tlag` (s) that specifies the lag between start of the cycle
+, i.e. chamber closing time and the time when the gas reaches the sensor.
+
+We use the same surface area and the same tlag for each collar but simulate 
+removing the litter and then measure the depth of each collar 
+to recompute the volume by assigning random numbers to the depth.
+
+
+```{r}
+chamberVol = 0.6*0.6*0.6		# chamber was a cube of 0.6m length
+surfaceArea = 0.6*0.6
+collar_spec <- tibble(
+  collar = unique(dsChunk$collar), 
+  depth = pmax(0,rnorm(length(collar), mean = 0.03, sd = 0.015)),
+  area = surfaceArea,
+  volume = chamberVol + surfaceArea * depth,
+  tlag = NA)
+head(collar_spec)
+```
+
+```{r}
+checkCollarSpec(dsChunk, collar_spec)
+```
+
 
 Computing the flux
 ------------------
 
-Function `calcClosedChamberFluxForChunks` helps with subsetting the data 
+Function `calcClosedChamberFluxForChunkSpecs` helps with subsetting the data 
 and applying function `calcClosedChamberFlux` to each subset.
 
 ```{r}
 # for demonstration use only the first 20 cycles
 dsChunk20 <- subset(dsChunk, as.integer(iChunk) <= 20) 
-chamberVol = 0.6*0.6*0.6		# chamber was a cube of 0.6m length
-surfaceArea = 0.6*0.6
-
-resChunks1 <- calcClosedChamberFluxForChunks(
-  dsChunk20, colTemp = "AirTemp"
+resChunks1 <- calcClosedChamberFluxForChunkSpecs(
+  dsChunk20, collar_spec
+  , colTemp = "AirTemp"
   # linear and saturating shape
   , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)	
   , debugInfo = list(omitEstimateLeverage = TRUE)	# faster
-  , volume = chamberVol
-  , area = surfaceArea
 )
 head(resChunks1)
 ```
@@ -141,7 +173,7 @@ written to a pdf. If there are more cycles, i.e. plots, than argument
 Lag times between closing the chamber and the start of the concentration
 increase, i.e. when the gas arrives at the sensor, is by default estimated by a
 breakpoint detection method. This method is not robust to fluctuations, early
-saturation, or other possible pecularities of the concentration time series. In
+saturation, or other possible peculiarities of the concentration time series. In
 other to detect those subsets, where lag-time detection has failed, on can
 inspect the inferred lag-times for outliers.
 
@@ -152,19 +184,18 @@ conditions, the lag-time should not differ much.
 table(resChunks1$tLag)
 ```
 
-We infer that for this campaign a lag-time of about 15 seconds is appropriate.
+We infer that for this campaign a lag-time of about 16 seconds is appropriate.
 
 One can save processing time and avoid breakpoint-detection failures by specifying
-a fixed lag-time during the concentration fitting by parameter `useFixedTLag`.
+a fixed lag-time with the collar specification.
 ```{r}
-resChunks2 <- calcClosedChamberFluxForChunks(
-  dsChunk20, colTemp = "T_LI840"
+collar_spec2 <- collar_spec; collar_spec2$tlag <- 16
+resChunks2 <- calcClosedChamberFluxForChunkSpecs(
+  dsChunk20, collar_spec2
+  , colTemp = "AirTemp"
   # linear and saturating shape
   , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)	
   , debugInfo = list(omitEstimateLeverage = TRUE)	# faster
-  , volume = chamberVol
-  , area = surfaceArea
-  , useFixedTLag = 15
 )
 head(resChunks2)
 ```

@@ -283,7 +283,8 @@ subsetContiguous <- function(
 	timeDiffInSeconds <- diff(as.numeric(ds[[colTime]]))
 	# records with missing records in time before (start a new chunk) 
 	iGaps <-  which( timeDiffInSeconds > gapLength)	
-	iCollarChanges <- which( diff(as.numeric(ds[[colIndex]])) != 0 )
+	ds$collar <- ds[[colIndex]]
+	iCollarChanges <- which( diff(as.numeric(ds$collar)) != 0 )
 	# start, breaks, end 
 	iChunks <- c( 1, sort(union(iCollarChanges, iGaps)), nrow(ds) ) 
 	##details<<
@@ -295,7 +296,7 @@ subsetContiguous <- function(
 				dsia <- cbind( 
 				  iChunk = i - 1
 				  , filter( ds, row_number() %in% (iChunks[i - 1] + 1):(iChunks[i]) ))
-				index <- dsia[[colIndex]][1] 
+				index <- dsia$collar[1] 
 				dsi <- dsia[is.finite(dsia[[colMeasure]]),]
 				timeSec <- as.numeric(dsi[[colTime]]) - as.numeric( dsi[[colTime]][1] )
 				if (index == indexNA || nrow(dsi) < minNRec || max(timeSec) < minTime || 
@@ -303,7 +304,8 @@ subsetContiguous <- function(
 				) return(NULL) else return(dsi)
 			}))
 	dsChunks$iChunk <- as.factor(dsChunks$iChunk)		# convert to factor
-	##value<< Argument \code{ds} with between-Chunk rows omitted and an additional 
-	## integer column \code{iChunk} that designates the chunk number.
+	##value<< Argument \code{ds} with between-Chunk rows omitted and an additional
+	## modified factor columns \code{iChunk} and \code{collar} that designates the 
+	## chunk number and index variable respectively.
 	dsChunks
 }

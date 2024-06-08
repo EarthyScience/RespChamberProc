@@ -795,7 +795,6 @@ sigmaBootLeverage <- function(
   # indices of the end (deployment) of the duration
   close <- seq(max(15, length(conc) - 40), length(conc), 1) 
   ##defining the function to be bootstrapped based on starting and deployment time
-  nSample = 80
   starts <-  sample(start, nSample, replace = TRUE)
   closes <-  sample(close, nSample, replace = TRUE)
   zz <- sapply(1:nSample, function(i){

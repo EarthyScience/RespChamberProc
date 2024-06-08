@@ -21,4 +21,6 @@ importFrom(rlang, sym, syms, UQ)
 #importFrom(plyr, d_ply, dlply, ldply)	
 import(purrr)
 import(dplyr)			 
+import(tidyr) # nest, unnest
+import(furrr) # plan, future_pmap
 #importFrom(lazyeval, interp)

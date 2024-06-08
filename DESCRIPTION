@@ -5,8 +5,10 @@ Author: Thomas Wutzler, Oscar Perez Priego
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Description: Processing data from respiration chambers.  
 Depends: R (>= 3.0.0), methods
-Imports: rlang, changepoint, nlme, segmented, tibble,  dplyr, purrr
+Imports: rlang, changepoint, nlme, segmented, tibble,  dplyr, purrr, tidyr, furrr
 Suggests: testthat, knitr,ggplot2
 VignetteBuilder: knitr
 License: GPL (>= 3)
 LazyData: true
+RoxygenNote: 7.3.1
+Encoding: UTF-8

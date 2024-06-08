@@ -30,26 +30,26 @@ if (nzchar(fName)) {
   chamberVolByChunk <- data.frame( 
     iChunk = c(as.character(unique(dsChunked$iChunk)), "unknownChunk")
     , volume = chamberVol * c(0.9, 1.1, 1))
-  resChunks <- calcClosedChamberFluxForChunks(
+  resChunks <- suppressWarnings(calcClosedChamberFluxForChunks(
     dsChunked, colTemp = "T_LI840"
     # linear and saturating shape
     ,fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
     ,debugInfo = list(omitEstimateLeverage = TRUE)  # faster
     ,volumesByChunk = chamberVolByChunk
-    ,area = surfaceArea)
+    ,area = surfaceArea))
   
   test_that("calcClosedChamberFluxForChunks", {
         expect_true( nrow(resChunks) > 1 )    
         expect_true( all( c("flux","sdFlux") %in% names(resChunks)) )
         expect_true( all( "iChunk" %in% names(resChunks)) )
         expect_true( all( table(resChunks$iChunk) == 1) )
-        resChunks1 <- calcClosedChamberFluxForChunks(
+        resChunks1 <- suppressWarnings(calcClosedChamberFluxForChunks(
           dsChunked, colTemp = "T_LI840"
           # linear and saturating shape
           , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
           , debugInfo = list(omitEstimateLeverage = TRUE)  # faster
           , volume = chamberVol
-          , area = surfaceArea)
+          , area = surfaceArea))
         # using a smaller volume in chunk-varying volume
         expect_true( resChunks$flux[1] < resChunks1$flux[1] )  
         # using a larger volume in chunk-varying volume
@@ -59,12 +59,12 @@ if (nzchar(fName)) {
   test_that("calcClosedChamberFluxForChunks with error on volumes",{
         chamberVolByChunkWrongColumnName <- slice(chamberVolByChunk, 2L);
         expect_error(
-        resChunks2 <- calcClosedChamberFluxForChunks(
+        resChunks2 <- suppressWarnings(calcClosedChamberFluxForChunks(
           dsChunked, colTemp = "T_LI840"
           , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
           , debugInfo = list(omitEstimateLeverage = TRUE)  # faster
           , volumesByChunk = chamberVolByChunkWrongColumnName
-          , area = surfaceArea)
+          , area = surfaceArea))
         )
       })
   
@@ -72,24 +72,24 @@ if (nzchar(fName)) {
         chamberVolByChunkWrongColumnName <- structure(
           chamberVolByChunk, names = c("iChunk","Vol"))
         expect_error(
-            resChunks2 <- calcClosedChamberFluxForChunks(
+            resChunks2 <- suppressWarnings(calcClosedChamberFluxForChunks(
               dsChunked, colTemp = "T_LI840"
               ,fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
               ,debugInfo = list(omitEstimateLeverage = TRUE)  # faster
               ,volumesByChunk = chamberVolByChunkWrongColumnName
-              ,area = surfaceArea)
+              ,area = surfaceArea))
         )
       })
   
   test_that("calcClosedChamberFluxForChunks with error on volume as vector",{
     chamberVolVector <- chamberVolByChunk$volume
     expect_error(
-      resChunks2 <- calcClosedChamberFluxForChunks(
+      resChunks2 <- suppressWarnings(calcClosedChamberFluxForChunks(
         dsChunked, colTemp = "T_LI840"
         ,fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
         ,debugInfo = list(omitEstimateLeverage = TRUE)  # faster
         ,volumesByChunk = chamberVolVector
-        ,area = surfaceArea)
+        ,area = surfaceArea))
     )
   })
   
