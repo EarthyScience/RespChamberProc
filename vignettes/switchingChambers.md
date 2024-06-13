@@ -6,15 +6,15 @@ output:
     keep_md: true
 vignette: >
   %\VignetteEngine{knitr::knitr}
-  %\VignetteIndexEntry{Switching chambers between cycles}
+  %\VignetteIndexEntry{Processing several measurement cycles of different setup}
   %\usepackage[UTF-8]{inputenc}
 ---
 
 
 
 
-Processing several measurement cycles
-=====================================
+Processing several measurement cycles of different setup
+========================================================
 
 
 
@@ -103,6 +103,7 @@ plot( CO2_dry ~ TIMESTAMP, dss, ylab = "CO2 (ppm)", xlab = "time (Minute:Second)
 ```
 
 ![](switchingChambers_files/figure-html/concSinglePlot-1.png)<!-- -->
+
 Associating Chamber information to chunks
 -----------------------------------------
 Different collars may have different depth leading to different volume, or are
@@ -132,14 +133,18 @@ dsChunk %>% group_by(iChunk) %>% summarise(collar = first(collar)) %>%  head()
 ## 6 9          31
 ```
 
-DataFrame `collar_spec` then needs to specify for collar id in column `collar`, 
-the colums `area` (m2) and `volume` (m3) need to be specified,
-as well a column `tlag` (s) that specifies the lag between start of the cycle
-, i.e. chamber closing time and the time when the gas reaches the sensor.
+DataFrame `collar_spec` then needs to specify for each collar id in column `collar`, 
+the colums `area` (m2) and `volume` (m3),
+as well a `tlag` (s), the lag time between start of the cycle
+, i.e. the start of the chunk (usually chamber closing time), 
+and the time when the gas reaches the sensor.
 
-We use the same surface area and the same tlag for each collar but simulate 
-removing the litter and then measure the depth of each collar 
-to recompute the volume by assigning random numbers to the depth.
+In this example, we specify the same surface area and the same tlag 
+for each collar but simulate 
+removing the litter and then measuring the depth of each collar 
+to recompute the volume. The depth, here, are random numbers around 3 cm.
+If the lagtime is set to missing (NA) then it is estimated 
+in each chunk by a breakpoint detection.
 
 
 
@@ -167,23 +172,19 @@ head(collar_spec)
 ## 6     27 0.0129   0.36  0.221 NA
 ```
 
+Problems with association setups to the data can be checked by function
+`checkCollarSpec`, which returns FALSE and attribute `msg` in case of problems.
 
 ```r
 checkCollarSpec(dsChunk, collar_spec)
-```
-
-```
-## [1] TRUE
-## attr(,"msg")
-## [1] "ok"
 ```
 
 
 Computing the flux
 ------------------
 
-Function `calcClosedChamberFluxForChunkSpecs` helps with subsetting the data 
-and applying function `calcClosedChamberFlux` to each subset.
+Function `calcClosedChamberFluxForChunkSpecs` applies 
+function `calcClosedChamberFlux` to each subset.
 
 
 ```r
@@ -212,10 +213,11 @@ head(resChunks1)
 ```
 
 The results are similar as for `calcClosedChamberFlux`, unless there are 
-several rows identified by additional key column iChunk.
+several rows identified by additional key columns `iChunk` and `chamber.`
 
 ## Plotting faceted data and fits
-Plot the results to dectect problems. 
+We recommend to plot the results together with the concentration data
+to dectect problems. 
 
 ```r
 library(ggplot2)
@@ -227,7 +229,7 @@ print(plots$plot[[1]]) # print the first page
 
 If argument `fileName` is provided to `plotCampaignConcSeries`. All plots are
 written to a pdf. If there are more cycles, i.e. plots, than argument 
-`plotsPerPage`(default 64) there will be several pages in the pdf.
+`plotsPerPage` (default 64) there will be several pages in the pdf.
 
 ## Inspecting lag-times
 
@@ -252,13 +254,19 @@ table(resChunks1$tLag)
 ##  9  1  1  2  2  1  1  1  2
 ```
 
-We infer that for this campaign a lag-time of about 16 seconds is appropriate.
+The plots do not indicate problems, and the longest estimated lagtime
+varies between 0 and 16 seconds. 
+Since slightly overestimating the lagtime does not change the flux but
+only might slightly increase the uncertainty, 
+we infer that for this campaign a lag-time of about 16 seconds is appropriate.
 
-One can save processing time and avoid breakpoint-detection failures by specifying
-a fixed lag-time with the collar specification.
+One can save processing time and avoid failures in the non-robust
+breakpoint-detection by specifying
+a fixed lag-time (may differ across collars) with the collar specification.
 
 ```r
-collar_spec2 <- collar_spec; collar_spec2$tlag <- 16
+collar_spec2 <- mutate(collar_spec, tlag = 16)
+
 resChunks2 <- calcClosedChamberFluxForChunkSpecs(
   dsChunk20, collar_spec2
   , colTemp = "AirTemp"
