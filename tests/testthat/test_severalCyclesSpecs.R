@@ -1,4 +1,5 @@
 #require(testthat)
+#library(dplyr)
 context("severalCyclesSpecs")
 
 # fit chambers in parallel inside calcClosedChamberFluxForChunkSpecs

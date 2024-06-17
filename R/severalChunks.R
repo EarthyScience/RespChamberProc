@@ -84,7 +84,8 @@ checkCollarSpec <- function(
     paste(missing_cols, collapse=","))))
   # check if collar_spec has a unique row for each chamber
   collar_spec_sel <- select(collar_spec, all_of(required_columns))
-  ds_join <- collar_map %>% left_join(collar_spec, by = join_by(collar))
+  ds_join <- collar_map %>% left_join(
+    collar_spec, by = join_by(collar), relationship = "many-to-many")
   dsFail <- ds_join %>% group_by(iChunk,collar) %>% 
     summarize(n_collar = n()) %>% filter(n_collar != 1)
   #dsFail <- ds_join %>% group_by(collar) %>% summarize(n_collar = length(unique(collar))) %>% ungroup() %>% head(3)
