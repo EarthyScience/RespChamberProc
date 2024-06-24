@@ -809,8 +809,11 @@ sigmaBootLeverage <- function(
   central_thin <- if (length(central) > (nRecCentral-2)) {
     i <- round(seq(1,length(central),length.out = nRecCentral))
     central[i[2:(nRecCentral-1)]]
+  } else if(length(central) > 2){
+    central[2:(length(central)-1)] # omit central_begin and central_end
   } else {
-    central[2:(nRecCentral-1)]
+    # special case where central is not longer than c(central_begin, central_end)
+    central[FALSE] 
   }
   zz <- sapply(1:nSample, function(i){
     subIndices <- c(starts[i]:central_begin, central_thin, central_end:closes[i])
