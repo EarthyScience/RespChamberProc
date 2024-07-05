@@ -16,6 +16,7 @@ test_that("default example flux Estimates runs",{
 			#trace(calcClosedChamberFlux, recover)		#untrace(calcClosedChamberFlux)
 			#resFit <- calcClosedChamberFlux(ds, debugInfo = list(tLagFixed = 0))
 			resFit <- calcClosedChamberFlux(ds, useFixedTLag = 0)
+			expect_true(!is.null(resFit))
 			#plotResp(ds, resFit)
 		})
 

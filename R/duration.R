@@ -6,7 +6,7 @@ plotDurationUncertainty <- function(
 	  ## list of functions to yield 
 	  ## a single flux estimate, see details of \code{\link{calcClosedChamberFlux}}
 	, ...	            ##<< further arguments to \code{\link{calcClosedChamberFlux}}
-	, durations = seq( max(times0l[16],resFit0$tLag), max(times0), length.out = min(length(times0l),nDur + 1))		##<< 
+	, durations = head(seq( max(times0l[16],resFit0$tLag), max(times0), length.out = min(length(times0l),nDur + 1)),-1)		##<< 
 	  ## durations to check. Default is equally spaced between time at 
 	  ## 16 records after tLag and maximum duration.
 	, nDur = 20		    ##<< number of durations to check
@@ -19,13 +19,11 @@ plotDurationUncertainty <- function(
 	#resFit0
 	if (length(times0l) < 16) stop(
 	  "need at least 16 records aftet timelag to apply plotDurationUncertainty.")
-	message(paste(durations, collapse=","))
 	duration <- durations[1]
 	nDur <- length(durations)
 	#plot( CO2_dry ~ times0, ds)
 	resFits0 <- suppressWarnings(
 	  bind_rows(map_df( durations[-c(nDur + 1) ], function(duration){
-	      message(duration)
 				dss <- subset(ds, times0 <= duration )
 				times0s <- times0[times0 <= duration]
 				resFit <- calcClosedChamberFlux(dss, useFixedTLag = resFit0$tLag
@@ -40,19 +38,19 @@ plotDurationUncertainty <- function(
 	iMinTime <- if (min(resFits$sdFlux, na.rm = TRUE) <= maxSdFlux ) {
 	  min(which( resFits$sdFlux <= maxSdFlux )) 
 	} else nrow(resFits)
-	minDuration <- resFits[iMinTime,]
+  resFit_min <- resFits[iMinTime,]
 	##details<< 
 	## Produces a plot with standard deviation of the flux estimate versus 
-	## the duration of the measurment.
-	## The lines correspond to the given maxium acceptable standard deviation
+	## the duration of the measurement.
+	## The lines correspond to the given maximum acceptable standard deviation
 	## and the duration that matches this criterion.
 	plot( sdFlux ~ duration, resFits, xlab = "Duration of measurement (s)"
 	      , ylab = "sd(fluxEstimate)")
 	abline(h = maxSdFlux, col = "grey", lty = "dashed" )
-	abline(v = minDuration["duration"], col = "grey", lty = "dashed" )
+	  abline(v =resFit_min$duration, col = "grey", lty = "dashed" )
 	##value<< tibble result of \code{\link{calcClosedChamberFlux}} for 
-	## the minimum duration, with additional component 
-	ans <- mutate( resFits[iMinTime,]
+	## the minimum duration for which sd<maxSdFlux , with additional component 
+	ans <- mutate( resFit_min
 		, statAll = list(resFits)	##<< tibble: each row a fit for a given duration
 	)
 	ans

@@ -28,35 +28,24 @@ if (nzchar(fName)) {
   #
   chamberVol = 0.6*0.6*0.6    # chamber was a cube of 0.6m length
   surfaceArea = 0.6*0.6
-  nChunk <- length(unique(dsChunked$iChunk))
-  # pretend more chunks in volume dataset as in dsChunke
-  chamberVolByChunk <- data.frame( 
-    iChunk = c(as.character(unique(dsChunked$iChunk)), "unknownChunk")
-    , volume = chamberVol * c(0.9, 1.1, 1))
-  resChunks <- calcClosedChamberFluxForChunks(
-    dsChunked, colTemp = "T_LI840"
+  #nChunk <- length(unique(dsChunked$iChunk))
+  collar_spec <- tibble(
+    collar = unique(dsChunked$collar), 
+    area = surfaceArea,
+    volume = chamberVol,
+    tlag = NA)  
+  resChunks <- calcClosedChamberFluxForChunkSpecs(
+    dsChunked, collar_spec, colTemp = "T_LI840"
     # linear and saturating shape
     ,fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
     ,debugInfo = list(omitEstimateLeverage = TRUE)  # faster
-    ,volumesByChunk = chamberVolByChunk
-    ,area = surfaceArea)
+    )
   
   test_that("calcClosedChamberFluxForChunks", {
         expect_true( nrow(resChunks) > 1 )    
         expect_true( all( c("flux","sdFlux") %in% names(resChunks)) )
         expect_true( all( "iChunk" %in% names(resChunks)) )
         expect_true( all( table(resChunks$iChunk) == 1) )
-        resChunks1 <- calcClosedChamberFluxForChunks(
-          dsChunked, colTemp = "T_LI840"
-          # linear and saturating shape
-          , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
-          , debugInfo = list(omitEstimateLeverage = TRUE)  # faster
-          , volume = chamberVol
-          , area = surfaceArea)
-        # using a smaller volume in chunk-varying volume
-        expect_true( resChunks$flux[1] < resChunks1$flux[1] )  
-        # using a larger volume in chunk-varying volume
-        expect_true( resChunks$flux[2] > resChunks1$flux[1] )  
       })
   
   #

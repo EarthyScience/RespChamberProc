@@ -796,7 +796,9 @@ sigmaBootLeverage <- function(
   start <- seq(0, 10)   # indices of starting the time series
   central_begin <- 12
   # indices of the end (deployment) of the duration
-  if( length(conc) < 16) stop("encountered short time series in sigmaBootLeverage")
+  if( length(conc) < 16) stop(paste(
+    "Estimating uncertainty due to leverage of records at the start or end ", 
+    "requires at least 16 records. But was only ", length(conc)))
   close <- seq(max(15, length(conc) - 40), length(conc), 1) 
   central_end <- close[1] -2
   ##defining the function to be bootstrapped based on starting and deployment time

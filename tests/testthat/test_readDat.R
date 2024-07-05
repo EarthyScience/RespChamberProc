@@ -32,7 +32,7 @@ test_that("x81 annotation",{
 
 test_that("x81 bad cases",{
   # due to instrument errors, x81 files have sometimes been screwed up
-  # collect those cases in develop directory and read them
+  # collect those cases in develop directory and check that they still can be read
   # to be executed from package directory
   testDir <- "develop/x81Cases"
   if (dir.exists(testDir)) {
@@ -41,6 +41,7 @@ test_that("x81 bad cases",{
     for (fName in fNames) {
       message(fName)
       ds <- read81xVar(fName)
+      expect_true(!is.null(ds))
     }
   }
 })

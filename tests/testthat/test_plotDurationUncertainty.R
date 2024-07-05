@@ -11,7 +11,7 @@ test_that("run plotDurationUncertainty",{
     , nDur = 10
     , durations = c(100,120,150)
   )
-  resDur$duration
+  expect_that(resDur$duration, equals(120))
 })
 
 
