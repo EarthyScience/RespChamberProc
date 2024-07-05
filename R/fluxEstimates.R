@@ -782,6 +782,8 @@ sigmaBootLeverage <- function(
 		  ## May provide from last bootstrap to speed up fitting  
 		, tryAutoCorr = TRUE	##<< set to FALSE to not try to fit 
 		  ## model with autocorrelation
+		, nRecCentral = 20 ##<< the number of records kept in 
+		  ## the central part of the time series.
 ){
 	##seealso<< \code{\link{RespChamberProc}}
   periodLength <- diff( as.numeric(times[c(1,length(times))]) )
@@ -792,14 +794,29 @@ sigmaBootLeverage <- function(
       return( c( sd = NA_real_, "5%" = NA_real_, "50%" = NA_real_, "95%" = NA_real_ ) )
     } 
   start <- seq(0, 10)   # indices of starting the time series
+  central_begin <- 12
   # indices of the end (deployment) of the duration
   close <- seq(max(15, length(conc) - 40), length(conc), 1) 
+  central_end <- close[1] -2
   ##defining the function to be bootstrapped based on starting and deployment time
-  nSample = 80
   starts <-  sample(start, nSample, replace = TRUE)
   closes <-  sample(close, nSample, replace = TRUE)
+  ##details<< For determining the uncertainty due to leverage, 
+  ## the inner part of the concentration time series has low influence.
+  ## Hence, fitting is accelerated by thinning the inner part of long series to
+  ## only \code{nRecCentral} records.
+  central <- central_begin:central_end
+  central_thin <- if (length(central) > (nRecCentral-2)) {
+    i <- round(seq(1,length(central),length.out = nRecCentral))
+    central[i[2:(nRecCentral-1)]]
+  } else if(length(central) > 2){
+    central[2:(length(central)-1)] # omit central_begin and central_end
+  } else {
+    # special case where central is not longer than c(central_begin, central_end)
+    central[FALSE] 
+  }
   zz <- sapply(1:nSample, function(i){
-    subIndices <- starts[i]:closes[i]
+    subIndices <- c(starts[i]:central_begin, central_thin, central_end:closes[i])
     fRegress( conc[subIndices], times[subIndices], start = coefStart
               , tryAutoCorr = tryAutoCorr  )$stat[1]
   })

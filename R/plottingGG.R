@@ -1,7 +1,7 @@
 plotCampaignConcSeries <- function(
   ### get a series of ggplots of the time series and its fits
-  ds                     ##<< data frame to plot, with columns \code{idCol}
-    ## , \code{timeCol} and \code{varName}
+  ds                     ##<< data frame to plot, with columns \code{colChunk}
+    ## , \code{collar}, \code{timeCol} and \code{varName}
   , dsFits = NULL        ##<< tibble of results of 
     ## \code{\link{calcClosedChamberFlux}}  
     ## with columns <colChunk>, flux, sdFlux, model, 
@@ -18,6 +18,8 @@ plotCampaignConcSeries <- function(
   , fTextTR = NULL       ##<< function(resFit) to add a second text to the 
     ## top right of the plot, by default the provided quality flag, 
     ## where it is not zero
+  , fTextHead = NULL     ##<< function(resFit) to specify the facet heading text
+    ## defaults to \code{paste0(resFit[[colChunk]],"/", resFit$collar)}
   , plotsPerPage = 64    ##<< number of plots per page
   , fileName = ""        ##<< if non-zero length string, the fileName where 
     ## all plots are printed to  #paste0(varName,".pdf")
@@ -40,8 +42,12 @@ plotCampaignConcSeries <- function(
   #iCamp <- 1
   #dss <- subset(ds, campaign==1 & Chamber==1)
   uniqueId <- unique(ds[[colChunk]])
+  if (is.null(fTextHead)) fTextHead <- function(resFit){ 
+    paste0(resFit[[colChunk]], "/", resFit$collar)}
+  id_labels <- structure(fTextHead(dsFits), names = paste(dsFits[[colChunk]]))
   N <- length(uniqueId)
   ds$id <- factor(ds[[colChunk]])  # drop unused factor levels
+  idu <- unique(ds$id)
   #if (length(resL) && is.null(names(resL)) ) names(resL) <- levels(ds$id)
   if (length(qualityFlag) == 1L) qualityFlag <- rep(qualityFlag, N)
   if (length(qualityFlag) != N) warning(
@@ -80,8 +86,10 @@ plotCampaignConcSeries <- function(
     p1 <- ggplot2::ggplot( dss, ggplot2::aes_string(x = "times0", y = varName) ) + 
       ggplot2::geom_point(
         shape = 1, ggplot2::aes_string(col = "qf"), na.rm = TRUE) + 
-      ggplot2::facet_wrap( ~id, scales = "free") +
-      ggplot2::scale_color_manual(values = colCodes, guide  =  FALSE) +
+      #ggplot2::facet_wrap( ~id, scales = "free") +
+      ggplot2::facet_wrap( 
+        ~id, scales = "free", labeller = ggplot2::labeller(id = id_labels)) +
+      ggplot2::scale_color_manual(values = colCodes, guide  =  "none") +
       ggplot2::xlab("time (s)") + ggplot2::ylab(ylabel) +
       ggplot2::theme_bw(base_size = 9) + 
       #ggplot2::theme(panel.grid.minor = element_blank())
