@@ -1,25 +1,31 @@
 plotDurationUncertainty <- function(
-	### plot the increase of uncertainty with decreaseing measurement duration
+	### plot the increase of uncertainty with decreasing measurement duration
 	ds
 	, colTime = "TIMESTAMP"	##<< column name of time [s]
 	, fRegress = c(exp = regressFluxExp, lin = regressFluxLinear, tanh = regressFluxTanh)	##<< 
 	  ## list of functions to yield 
 	  ## a single flux estimate, see details of \code{\link{calcClosedChamberFlux}}
 	, ...	            ##<< further arguments to \code{\link{calcClosedChamberFlux}}
-	, durations = seq( max(65,resFit0$tLag), max(times0), length.out = nDur + 1)		##<< 
-	  ## durations to check. Default is equally spaced between tLag and maximum duration
+	, durations = seq( max(times0l[16],resFit0$tLag), max(times0), length.out = min(length(times0l),nDur + 1))		##<< 
+	  ## durations to check. Default is equally spaced between time at 
+	  ## 16 records after tLag and maximum duration.
 	, nDur = 20		    ##<< number of durations to check
 	, maxSdFlux = 1	  ##<< maxium allowed standard deviation of flux in [mumol/s]
 ){
 	times <- ds[[colTime]]
 	times0 <- as.numeric(times) - as.numeric(times[1])
 	resFit0 <- calcClosedChamberFlux(ds, colTime = colTime, fRegress = fRegress, ...)
+	times0l <- times0[times0 >= resFit0$tLag]
 	#resFit0
+	if (length(times0l) < 16) stop(
+	  "need at least 16 records aftet timelag to apply plotDurationUncertainty.")
+	message(paste(durations, collapse=","))
 	duration <- durations[1]
 	nDur <- length(durations)
 	#plot( CO2_dry ~ times0, ds)
 	resFits0 <- suppressWarnings(
 	  bind_rows(map_df( durations[-c(nDur + 1) ], function(duration){
+	      message(duration)
 				dss <- subset(ds, times0 <= duration )
 				times0s <- times0[times0 <= duration]
 				resFit <- calcClosedChamberFlux(dss, useFixedTLag = resFit0$tLag

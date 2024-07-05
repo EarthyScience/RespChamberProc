@@ -722,7 +722,7 @@ regressFluxTanh <- function(
 	#lines( fitted(nlm1) ~ timesSec, col = "purple"  )
 	#plot(resid(nlm1) ~ timesSec )
 	#qqnorm( resid(nlm1) ); abline(0,1)
-	nlmBest <- if (!inherits(nlm1Auto,"try-error") && (AIC(nlm1Auto) < AIC(nlm1)) ) 
+	nlmBest <- if (!is.null(nlm1Auto) && !inherits(nlm1Auto,"try-error") && (AIC(nlm1Auto) < AIC(nlm1)) ) 
 	  nlm1Auto else nlm1
 	res <- list( stat = 	##<< numeric vector with 4 entries: 
 	               ## \code{flux}, \code{sdFlux}, \code{AIC}, and \code{autoCorr}:
@@ -796,6 +796,7 @@ sigmaBootLeverage <- function(
   start <- seq(0, 10)   # indices of starting the time series
   central_begin <- 12
   # indices of the end (deployment) of the duration
+  if( length(conc) < 16) stop("encountered short time series in sigmaBootLeverage")
   close <- seq(max(15, length(conc) - 40), length(conc), 1) 
   central_end <- close[1] -2
   ##defining the function to be bootstrapped based on starting and deployment time
