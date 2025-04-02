@@ -67,7 +67,7 @@ test_that("zipped file with explicit opening connection",{
   open(con) # when explicitly opening, then also need to close connection
   ds0 <- readDat(con, tz = "UTC")
   expect_true( nrow(ds0) > 0 )
-  expect_true( isOpen(con) ) 
+  expect_true( isOpen(con) )
   close(con)
 })
 
@@ -79,7 +79,7 @@ test_that("reading dat file",{
   ds0 <- readDat(fName, tz = "UTC")
   expect_true( nrow(ds0) > 0 )
   # number of open connections did not change
-  expect_equal( nConn, nrow(showConnections())) 
+  expect_equal( nConn, nrow(showConnections()))
 })
 
 test_that("issue #5",{
@@ -91,4 +91,36 @@ test_that("issue #5",{
   expect_true( max(ds$iChunk) > 1 )
   expect_true( table(ds$iChunk)[1] > 1 )
 })
+
+tmpf = function() {
+  # testing reading Manip logger data for setup of North and sourth tower
+  fName <- "develop/x81Cases/licor_north1.81x"
+  fName <- "develop/x81Cases/licor_north3.81x"
+  if (nzchar(fName)) {
+    #ds <- read81x(fName)
+    #trace(read81xVar, recover) #untrace(read81xVar)
+    ds <- RespChamberProc::read81xVar(fName)
+    expect_true( max(ds$iChunk) > 1 )
+    expect_true( table(ds$iChunk)[1] > 1 )
+    expect_true( ds$label[1] == "CH1" )
+    #plot( CO2 ~ Date, ds )
+    #plot( CO2 ~ Date, ds[ds$iChunk==2,] )
+  }#
+}
+
+
+tmpf = function() {
+  # testing reading Manip logger data for setup of North and sourth tower
+  fName <- "develop/x82_cases/2022/01/25/data.csv"
+  if (nzchar(fName)) {
+    #ds <- read81x(fName)
+    sep = ","
+    ds <- RespChamberProc.read82z_csv(fName)
+    expect_true( max(ds$iChunk) > 1 )
+    expect_true( table(ds$iChunk)[1] > 1 )
+    expect_true( ds$label[1] == "CH1" )
+    #plot( CO2 ~ Date, ds )
+    #plot( CO2 ~ Date, ds[ds$iChunk==2,] )
+  }#
+}
 
