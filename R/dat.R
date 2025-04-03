@@ -157,7 +157,8 @@ read81xVar <- function(
   ## default: UTC
   , na.strings = c('','NA','NAN','"NAN"') ##<< see \code{\link{read.table}}
   , labelID = "Label:"    ##<< string at the start of lines indicating the label
-  , iChunkBase = 0        ##<< added to generatged iChunk_raw =  1:n_chunk
+  , iChunkBase = 0L       ##<< added to generatged iChunk_raw =  1:n_chunk
+  ## Make sure to pass integer (literal L) for integer iChunk column
 ){
   ##seealso<< \code{\link{readDat}}
   ##details<<
@@ -182,6 +183,7 @@ read81xVar <- function(
   # The format may change between blocks, so
   # read the column names of each chunk
   # find the label by "Label:"
+  iChunkBaseInt = as.integer(iChunkBase)
   resBlocks <- lapply( seq_along(blockStarts0), function(iChunk){
     blockStart <- blockStarts[iChunk]
     # read the label from above the info lines above the chunk
@@ -231,8 +233,9 @@ read81xVar <- function(
       , ...
       , colClasses = colClasses
     )
-    cbind( iChunk = iChunkBase + iChunk
-           , rawData[rawData$Type == 1,seq_along(colNamesChunk0)]
+    cbind( iChunk = iChunkBaseInt + iChunk
+           # constrain to Type 1, i.e. measurement records
+           , rawData[rawData$Type == 1L, seq_along(colNamesChunk0)]
            , label = label )
   })
   res <- suppressWarnings(bind_rows( resBlocks ))

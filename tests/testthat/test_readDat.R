@@ -6,6 +6,7 @@ test_that("x81 example",{
 			if (nzchar(fName)) {
 				#ds <- read81x(fName)
 				ds <- read81xVar(fName, iChunkBase = 1000)
+				expect_true( inherits(ds$iChunk, "integer"))
 				expect_true( all(ds$iChunk > 1000 ))
 				expect_true( table(ds$iChunk)[1] > 1 )
 				expect_true( ds$label[1] == "Flux2_140929_1600" )
