@@ -157,6 +157,7 @@ read81xVar <- function(
   ## default: UTC
   , na.strings = c('','NA','NAN','"NAN"') ##<< see \code{\link{read.table}}
   , labelID = "Label:"    ##<< string at the start of lines indicating the label
+  , iChunkBase = 0        ##<< added to generatged iChunk_raw =  1:n_chunk
 ){
   ##seealso<< \code{\link{readDat}}
   ##details<<
@@ -177,7 +178,7 @@ read81xVar <- function(
   setClass("myDate", where = globalenv())
   setAs("character","myDate", function(from)
     as.POSIXct(from, format = formatTS, tz = tz), where = globalenv() )
-  iChunk <- 94
+  iChunk <- 94 # iChunk = seq_along(blockStarts0)
   # The format may change between blocks, so
   # read the column names of each chunk
   # find the label by "Label:"
@@ -230,7 +231,7 @@ read81xVar <- function(
       , ...
       , colClasses = colClasses
     )
-    cbind( iChunk = iChunk
+    cbind( iChunk = iChunkBase + iChunk
            , rawData[rawData$Type == 1,seq_along(colNamesChunk0)]
            , label = label )
   })
