@@ -1,7 +1,7 @@
 #require(testthat)
 context("fluxEstimates")
 
-#data(chamberLoggerEx1s, package = "RespChamberProc")	
+#data(chamberLoggerEx1s, package = "RespChamberProc")
 #   does not work with RCMDCheck and testthat
 ds <- chamberLoggerEx1s[-(1:16),]
 conc <- ds$CO2_dry <- corrConcDilution(ds)
@@ -27,7 +27,7 @@ test_that("no flux with random data",{
   #trace(calcClosedChamberFlux, recover)		#untrace(calcClosedChamberFlux)
   res <- calcClosedChamberFlux(ds)
   expect_true( abs(res$flux) - 2*res$sdFlux < 0 )	# not significantly different from 0
-  expect_that( length(coefficients(res$model[[1]])), equals(2) )	# fitted a linear model
+  expect_equal( length(coefficients(res$model[[1]])), 2, tolearance=1e-8 )	# fitted a linear model
 })
 
 test_that("detect special case of numericall equal fluxes",{
@@ -43,8 +43,8 @@ test_that("detect special case of numericall equal fluxes",{
     res <- calcClosedChamberFlux(ds)
   )
   expect_true( is.na(res$flux) )
-})			
-			
+})
+
 test_that("detect special case no finite concentrations",{
   timesR <- 0:81
   concR <- rep(NA_real_, length(timesR))
@@ -56,4 +56,4 @@ test_that("detect special case no finite concentrations",{
     res <- calcClosedChamberFlux(ds)
   )
   expect_true( is.na(res$flux) )
-})			
+})

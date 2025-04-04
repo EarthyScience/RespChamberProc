@@ -47,7 +47,7 @@ genSMANIEControl <- function(){
 	ds <- ds[order(ds$campaign, ds$Chamber, ds$iChunk), ]
 	ds$id <- interaction( ds$campaign, ds$Chamber, ds$iChunk, drop=TRUE, lex.order = TRUE)
 	ds$Pa <- ds$AirPres * 1000		# convert kPa to Pa
-	SMANIEconc <- ds 
+	SMANIEconc <- ds
 	# TAKE care overwrites
 	save( SMANIEconc, file=file.path(projectDir,"SMANIEconc.Rd"))
 }
@@ -58,7 +58,7 @@ genSMANIEControl <- function(){
 	,resL=NULL			##<< list with results of \code{\link{calcClosedChamberFlux}} for each id-subset in ds
 	,varName="CO2_dry"	##<< variable to plot
 	,plotsPerPage=64	##<< number of plots per page
-	,fileName=paste0(varName,".pdf")	##<< fileName of the output pdf 
+	,fileName=paste0(varName,".pdf")	##<< fileName of the output pdf
 ){
 	#iCamp <- 1
 	#dss <- subset(ds, campaign==1 & Chamber==1)
@@ -81,15 +81,15 @@ genSMANIEControl <- function(){
 						times0 <- times - times[1]
 					}))
 				#dss <- dsc
-				p1 <- ggplot( dss, aes_string(x="times0", y=varName) ) + geom_point() + 
+				p1 <- ggplot( dss, aes(x=times0, y=.data[[varName]]) ) + geom_point() +
 						facet_wrap( ~ id, scales="free") +
-						theme_gray(base_size=9) + 
+						theme_gray(base_size=9) +
 						theme()
 				if( length(resL) ){
 					resLi <- resL[ names(resL) %in% idsPage ]
 					# resCalc <- resLi[[1]]
 					dfLag <- data.frame( id= names(resLi), tLag=sapply( resLi, function(resCalc){
-										if( !inherits(resCalc,"try-error") && length(resCalc$stat) )	resCalc$stat["tLag"] else NA_real_	
+										if( !inherits(resCalc,"try-error") && length(resCalc$stat) )	resCalc$stat["tLag"] else NA_real_
 									}))
 					#idi <- names(resLi)[1]
 					dfFitted <- do.call( rbind, lapply( names(resLi), function(idi){
@@ -100,7 +100,7 @@ genSMANIEControl <- function(){
 									dsr
 								} else NULL
 							}))
-					p1 <- p1 + 
+					p1 <- p1 +
 							geom_vline( aes(xintercept=tLag), col="darkgrey", linetype="dashed", data=dfLag ) +
 							geom_line( aes(y=fitted), col="red", data=dfFitted ) +
 							theme()
@@ -128,7 +128,7 @@ attr( .plotCampaignConcSeries, "ex") <- function(){
 	.createresCalcClosedChamberFlux <- function(){
 		resCalcClosedChamberFlux <- resL <- dlply( ds, .(id), function(dss){
 			cat( ",", levels(dss$id)[dss$id[1]] )
-			res2 <- res <- try( 
+			res2 <- res <- try(
 				res <- calcClosedChamberFlux( dss, colTemp="AirTemp", volume = 0.6*0.6*0.6
 				, debugInfo = list(useOscarsLagDectect = TRUE, omitAutoCorrFit=TRUE, omitEstimateLeverage = TRUE)
 				)
@@ -150,38 +150,38 @@ attr( .plotCampaignConcSeries, "ex") <- function(){
 	ds <- SMANIEconc
 	ds <- SMANIEconcScreened
 	goodPeriods <- list(	##<< list with entries of a chunk with two two values constraining the beginning and end times0
-			"2.2.60" = c(NA,200)	# bad end (forget to switch off?)			
-			,"5.1.17" = c(NA,180)	# bad end			
+			"2.2.60" = c(NA,200)	# bad end (forget to switch off?)
+			,"5.1.17" = c(NA,180)	# bad end
 	)
-	goodPeriods <- list(	##<< list with entries of a chunk with two two values constraining the beginning and end times0 
+	goodPeriods <- list(	##<< list with entries of a chunk with two two values constraining the beginning and end times0
 	"1.2.19" = c(0,0)		# double series
 	,"1.2.82" = c(0,0)		# nonsensical
-	,"2.1.1" = c(5,NA)		# bad gap est 
-	,"2.2.40" = c(NA,300)	# bad end (forget to switch off?)			
-	,"2.2.60" = c(NA,200)	# bad end (forget to switch off?)			
-	,"2.2.90" = c(NA,240)	# bad end (forget to switch off?)			
+	,"2.1.1" = c(5,NA)		# bad gap est
+	,"2.2.40" = c(NA,300)	# bad end (forget to switch off?)
+	,"2.2.60" = c(NA,200)	# bad end (forget to switch off?)
+	,"2.2.90" = c(NA,240)	# bad end (forget to switch off?)
 	,"2.2.116" = c(52,NA)	# bad gap est
-	,"3.1.6." = c(NA,200)	# bad end			
+	,"3.1.6." = c(NA,200)	# bad end
 	,"3.1.56" = c(NA,130)	# bad end
-	,"3.1.62" = c(NA,150) 	#bad end			
-	,"3.2.2" = c(35,NA)		# bad gap est			
-	,"3.3.17" = c(0,0)		# non sensical			
-	,"3.3.19" = c(0,0)		# non sensical			
-	,"3.3.23" = c(0,0)		# non sensical			
-	,"3.3.15" = c(NA,150)	# bad end			
-	,"4.2.94" = c(0,0)		# non sensical			
-	,"5.1.13" = c(NA,100)	# bad end			
-	,"5.1.17" = c(NA,180)	# bad end			
-	,"5.2.13" = c(NA,130)	# bad end			
-	,"5.2.17" = c(NA,130)	# bad end			
-	,"5.3.17" = c(NA,130)	# bad end			
-	,"3.3.18" = c(10,NA)		# bad gap est			
-	,"5.3.26" = c(NA,450)	# bad end			
-	,"5.3.42" = c(NA,200)	# bad end			
-	,"5.3.54" = c(NA,200)	# bad end			
-	,"5.3.56" = c(NA,200)	# bad end			
-	,"5.3.74" = c(NA,200)	# bad end			
-	,"5.3.76" = c(NA,200)	# bad end			
+	,"3.1.62" = c(NA,150) 	#bad end
+	,"3.2.2" = c(35,NA)		# bad gap est
+	,"3.3.17" = c(0,0)		# non sensical
+	,"3.3.19" = c(0,0)		# non sensical
+	,"3.3.23" = c(0,0)		# non sensical
+	,"3.3.15" = c(NA,150)	# bad end
+	,"4.2.94" = c(0,0)		# non sensical
+	,"5.1.13" = c(NA,100)	# bad end
+	,"5.1.17" = c(NA,180)	# bad end
+	,"5.2.13" = c(NA,130)	# bad end
+	,"5.2.17" = c(NA,130)	# bad end
+	,"5.3.17" = c(NA,130)	# bad end
+	,"3.3.18" = c(10,NA)		# bad gap est
+	,"5.3.26" = c(NA,450)	# bad end
+	,"5.3.42" = c(NA,200)	# bad end
+	,"5.3.54" = c(NA,200)	# bad end
+	,"5.3.56" = c(NA,200)	# bad end
+	,"5.3.74" = c(NA,200)	# bad end
+	,"5.3.76" = c(NA,200)	# bad end
 	,"1.3.55" =  c(0,0)		# convex
 	,"2.1.85" =  c(0,0)		# convex
 	,"2.2.156" =  c(0,0)		# convex
@@ -225,10 +225,10 @@ attr( .plotCampaignConcSeries, "ex") <- function(){
 	#ds0 <- ds <- subset(SMANIEconc, id %in% levels(SMANIEconc$id)[64+1:8] ) testing
 	#ds0 <- ds <- subset(SMANIEconc, id %in% c(levels(SMANIEconc$id)[64+1:3],"1.2.19","1.3.2")  ) #testing for fit errors
 	.createresCalcClosedChamberFlux <- function(){
-		resCalcClosedChamberFluxScreened <- 
+		resCalcClosedChamberFluxScreened <-
 				resL <- dlply( ds, .(id), function(dss){
 					cat( ",", levels(dss$id)[dss$id[1]] )
-					res2 <- res <- try( 
+					res2 <- res <- try(
 							res <- calcClosedChamberFlux( dss, colTemp="AirTemp", volume = 0.6*0.6*0.6
 									, debugInfo = list(
 										useOscarsLagDectect = TRUE
@@ -246,7 +246,7 @@ attr( .plotCampaignConcSeries, "ex") <- function(){
 	#
 	fileName=file.path(projectDir,paste0("SMANIEconcScreened_CO2_dry.pdf"))	##<< fileName
 	.plotCampaignConcSeries(ds, resL=resL, fileName=fileName)
-	
+
 }
 
 
