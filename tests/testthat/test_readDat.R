@@ -129,8 +129,8 @@ test_that("x82 day",{
     expect_true( inherits(ds$iChunk, "integer"))
     expect_true( all(ds$iChunk > 1000 ))
     expect_true( table(ds$iChunk)[1] > 1 )
-    #plot( CO2 ~ TIMESTAMP, ds )
-    #plot( CO2 ~ TIMESTAMP, subset(ds, iChunk==1001))
+    #plot( CO2 ~ Date, ds )
+    #plot( CO2 ~ Date, subset(ds, iChunk==1001))
   }
 })
 

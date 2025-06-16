@@ -59,10 +59,10 @@ read82z_single <- function(
     I(lines), col_types=col_types, col_select = all_of(names(col_types$cols)),
     name_repair = "minimal")
   attr(ds0,"spec") = NULL
-  ds0$TIMESTAMP = lubridate::as_datetime(paste(ds0$DATE, ds0$TIME), tz = tz)
+  ds0$Date = lubridate::as_datetime(paste(ds0$DATE, ds0$TIME), tz = tz)
   ds = as_tibble(ds0) %>%
     mutate(Pa=PA_CELL*1000, iChunk=iChunk) %>%
-    select(iChunk, TIMESTAMP, CO2, CO2_dry=CO2_DRY, TA_Avg=T_CELL, Pa)
+    select(iChunk, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=T_CELL, Pa)
 }
 attr(read82z_single,"ex") <- function(){
   fName = "develop/x82_cases/82m-0147-20220125000045.82z"
