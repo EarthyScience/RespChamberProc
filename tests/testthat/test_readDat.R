@@ -110,18 +110,30 @@ tmpf = function() {
 }
 
 
-tmpf = function() {
+test_that("x82 single",{
   # testing reading Manip logger data for setup of North and sourth tower
-  fName <- "develop/x82_cases/2022/01/25/data.csv"
+  #fName = "develop/x82_cases/2022/01/25/82m-0147-20220125000045.82z"
+  fName = "develop/x82_cases/82m-0147-20220125000045.82z"
+  if (file.exists(fName)) {
+    ds <- RespChamberProc:::read82z_single(fName)
+    expect_true( all(ds$iChunk == 1 ))
+    #plot( CO2 ~ TIMESTAMP, ds )
+  }
+})
+
+test_that("x82 day",{
+  fName <- system.file("genData/licor82.zip", package = "RespChamberProc")
   if (nzchar(fName)) {
-    #ds <- read81x(fName)
-    sep = ","
-    ds <- RespChamberProc.read82z_csv(fName)
-    expect_true( max(ds$iChunk) > 1 )
+    #ds = read82z(fName, temp_base_dir = "/dev/shm")
+    ds = read82z(fName, iChunkBase = 1000L)
+    expect_true( inherits(ds$iChunk, "integer"))
+    expect_true( all(ds$iChunk > 1000 ))
     expect_true( table(ds$iChunk)[1] > 1 )
-    expect_true( ds$label[1] == "CH1" )
-    #plot( CO2 ~ Date, ds )
-    #plot( CO2 ~ Date, ds[ds$iChunk==2,] )
-  }#
-}
+    #plot( CO2 ~ TIMESTAMP, ds )
+    #plot( CO2 ~ TIMESTAMP, subset(ds, iChunk==1001))
+  }
+})
+
+
+
 

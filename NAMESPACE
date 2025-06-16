@@ -1,6 +1,6 @@
 exportPattern("^[^\\.]")	#exports all variables that do not start with a period.
 
-import(methods)		
+import(methods)
 
 
   importFrom("grDevices", "dev.off", "pdf")
@@ -9,18 +9,19 @@ import(methods)
              "median", "quantile", "resid", "residuals", "sd", "update",
              "vcov","fitted")
   importFrom("utils", "capture.output", "read.table", "tail")
-  
+
 importFrom(changepoint, cpt.mean)
 importFrom(segmented, segmented, seg.control)
-importFrom(nlme, gls, corAR1, gnls, glsControl, gnlsControl)	# coef.corAR1	
+importFrom(nlme, gls, corAR1, gnls, glsControl, gnlsControl)	# coef.corAR1
 
 importFrom(tibble, tibble, as_tibble)
 importFrom(rlang, sym, syms, UQ)
 
-#import(ggplot2)		
-#importFrom(plyr, d_ply, dlply, ldply)	
+#import(ggplot2)
+#importFrom(plyr, d_ply, dlply, ldply)
 import(purrr)
-import(dplyr)			 
+import(dplyr)
 import(tidyr) # nest, unnest
 import(furrr) # plan, future_pmap
+import(readr)
 #importFrom(lazyeval, interp)
