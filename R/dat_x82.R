@@ -24,8 +24,8 @@ read82z <- function(
   read82z_single_call = if (catch_error) {
       function(zFile, iChunk) {
         tryCatch(
-          read82z_single(zFile, ..., iChunk = iChunk), 
-          #read82z_single(zFile, iChunk = iChunk), 
+          read82z_single(zFile, ..., iChunk = iChunk),
+          #read82z_single(zFile, iChunk = iChunk),
           error = function(e) {
             warning(e$message)
             tibble()
@@ -70,17 +70,21 @@ read82z_single <- function(
     H2O = col_double(),
     PA_CELL = col_double(),
     T_CELL = col_double(),
-    CHAMBER_STATE = col_integer()
+    STATE = col_integer()
   )
   ds0 = read_csv(
     I(lines), col_types=col_types, col_select = all_of(names(col_types$cols)),
     name_repair = "minimal", progress=FALSE, na = na)
   attr(ds0,"spec") = NULL
   ds0$Date = lubridate::as_datetime(paste(ds0$DATE, ds0$TIME), tz = tz)
+  # parsing the label from metadata.json: "LI-8250"/"PORT_LABEL"
+  metadata = fromJSON(unz(fName, "metadata.json"))
+  label = metadata$`LI-8250`$PORT_LABEL
+  ##details<< Filters for row with STATE==5
   ds = as_tibble(ds0) %>%
-    mutate(Pa=PA_CELL*1000, iChunk=iChunk) %>%
-    select(iChunk, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=T_CELL, Pa) %>%
-    filter(CAHMBER_STATE == 5)
+    filter(STATE == 5) %>%
+    mutate(Pa=PA_CELL*1000, iChunk=iChunk, label=label) %>%
+    select(iChunk, label, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=T_CELL, Pa)
 }
 attr(read82z_single,"ex") <- function(){
   fName = "develop/x82_cases/82m-0147-20220125000045.82z"

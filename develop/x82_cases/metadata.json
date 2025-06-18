@@ -1,0 +1,131 @@
+{
+	"CHAMBER" : 
+	{
+		"AREA" : 
+		{
+			"UNITS" : "cm+2",
+			"VALUE" : 317.79998779296875
+		},
+		"COLLAR_HEIGHT" : 
+		{
+			"UNITS" : "cm",
+			"VALUE" : 4.8000001907348633
+		},
+		"FIRMWARE" : "1.1.7",
+		"LATITUDE" : 
+		{
+			"UNITS" : "degrees",
+			"VALUE" : 0.0
+		},
+		"LONGITUDE" : 
+		{
+			"UNITS" : "degrees",
+			"VALUE" : 0.0
+		},
+		"PARK_POSITION" : 
+		{
+			"UNITS" : "degrees",
+			"VALUE" : 90
+		},
+		"SERIAL_NUMBER" : "82L-0301",
+		"TUBE_LENGTH" : 
+		{
+			"UNITS" : "cm",
+			"VALUE" : 1500.0
+		},
+		"VOLUME" : 
+		{
+			"UNITS" : "cm+3",
+			"VALUE" : 4076.10009765625
+		}
+	},
+	"FLUX" : 
+	[
+		{
+			"DEADBAND" : 
+			{
+				"UNITS" : "s",
+				"VALUE" : 5
+			},
+			"DILUTION_SOURCE" : "NONE",
+			"DILUTION_UNITS" : "NONE",
+			"GAS" : "CO2_DRY",
+			"GAS_SOURCE" : "LI-870",
+			"REPLICATE" : 1,
+			"STOP_TIME" : 
+			{
+				"UNITS" : "s",
+				"VALUE" : 20
+			},
+			"TEMPERATURE" : "TA",
+			"T_SOURCE" : "CHAMBER"
+		}
+	],
+	"LI-8250" : 
+	{
+		"FIRMWARE" : "2.0.0",
+		"LATITUDE" : 
+		{
+			"UNITS" : "degrees",
+			"VALUE" : 39.940391540527344
+		},
+		"LONGITUDE" : 
+		{
+			"UNITS" : "degrees",
+			"VALUE" : -5.7748870849609375
+		},
+		"PORT" : 1,
+		"PORT_LABEL" : "CH1",
+		"SERIAL_NUMBER" : "82m-0147",
+		"VOLUME" : 
+		{
+			"UNITS" : "cm+3",
+			"VALUE" : 35.0
+		}
+	},
+	"LI-870" : 
+	{
+		"FIRMWARE" : "1.0.4",
+		"SERIAL_NUMBER" : "ssa-1075",
+		"TUBE_LENGTH" : 
+		{
+			"UNITS" : "cm",
+			"VALUE" : 120.0
+		},
+		"VOLUME" : 
+		{
+			"UNITS" : "cm+3",
+			"VALUE" : 0.0
+		}
+	},
+	"METADATA" : 
+	{
+		"HORIZONTAL" : 1,
+		"OBSERVATION" : 
+		{
+			"UNITS" : "s",
+			"VALUE" : 180
+		},
+		"POSTPURGE" : 
+		{
+			"UNITS" : "s",
+			"VALUE" : 45
+		},
+		"PREPURGE" : 
+		{
+			"UNITS" : "s",
+			"VALUE" : 45
+		},
+		"TIMESTAMP_START" : 
+		{
+			"UNITS" : "YYYYMMDDHHMMSS",
+			"VALUE" : "20220125000045"
+		},
+		"VERTICAL" : 1,
+		"VOLUME_TOTAL" : 
+		{
+			"UNITS" : "cm+3",
+			"VALUE" : 5893.10009765625
+		}
+	}
+}
