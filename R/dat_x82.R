@@ -5,7 +5,8 @@ read82z <- function(
   ## extracted to a subdirectory, recommended to specify
   ## a location on an in-memory file system, such as '/dev/shm'.
   , ...					          ##<< further arguments to \code{\link{read82z_single}}
-  , iChunkBase = 0L          ##<< offset for chunk identifies
+  , iChunkBase = 0L       ##<< offset for chunk identifies
+  , catch_error = TRUE    ##<< set to FALSE to quit on error instead of warning
 ){
   ##details<<
   ## Inside the zip file is a directory structure of further zip files of
@@ -18,8 +19,23 @@ read82z <- function(
   zFiles = unzip(fName, exdir = temp_dir)
   iChunks = iChunkBase + seq_along(zFiles)
   #zFile = zFiles[1]
-  dsl = map2(zFiles, iChunks,
-             function(zFile, iChunk) read82z_single(zFile, ..., iChunk = iChunk) )
+  #iChunk = iChunks[1]
+  #tmp = read82z_single(zFile, ..., iChunk = iChunk)
+  read82z_single_call = if (catch_error) {
+      function(zFile, iChunk) {
+        tryCatch(
+          read82z_single(zFile, ..., iChunk = iChunk), 
+          #read82z_single(zFile, iChunk = iChunk), 
+          error = function(e) {
+            warning(e$message)
+            tibble()
+            })
+          }
+  } else {
+    function(zFile, iChunk) read82z_single(zFile, ..., iChunk = iChunk)
+  }
+  dsl = map2(zFiles, iChunks, read82z_single_call)
+             #function(zFile, iChunk) read82z_single(zFile, ..., iChunk = iChunk) )
   ds <- list_rbind(dsl)
 }
 attr(read82z,"ex") <- function(){
@@ -34,7 +50,7 @@ read82z_single <- function(
   , ...					          ##<< further arguments to \code{\link{read_csv}}
   , tz = "UTC"				    ##<< specify a time zone when converting to POSIXct,
   ## default: UTC
-  , na.strings = c('','NA','NAN','"NAN"') ##<< see \code{\link{read.table}}
+  , na = c('','NA','NAN','"NAN"','-9999') ##<< see \code{\link{read.table}}
   , iChunk = 1L
 ){
   ##seealso<< \code{\link{readDat}}
@@ -53,16 +69,18 @@ read82z_single <- function(
     CO2_DRY = col_double(),
     H2O = col_double(),
     PA_CELL = col_double(),
-    T_CELL = col_double()
+    T_CELL = col_double(),
+    CHAMBER_STATE = col_integer()
   )
   ds0 = read_csv(
     I(lines), col_types=col_types, col_select = all_of(names(col_types$cols)),
-    name_repair = "minimal")
+    name_repair = "minimal", progress=FALSE, na = na)
   attr(ds0,"spec") = NULL
   ds0$Date = lubridate::as_datetime(paste(ds0$DATE, ds0$TIME), tz = tz)
   ds = as_tibble(ds0) %>%
     mutate(Pa=PA_CELL*1000, iChunk=iChunk) %>%
-    select(iChunk, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=T_CELL, Pa)
+    select(iChunk, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=T_CELL, Pa) %>%
+    filter(CAHMBER_STATE == 5)
 }
 attr(read82z_single,"ex") <- function(){
   fName = "develop/x82_cases/82m-0147-20220125000045.82z"
