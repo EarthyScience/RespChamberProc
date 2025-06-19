@@ -68,8 +68,10 @@ read82z_single <- function(
     CO2 = col_double(),
     CO2_DRY = col_double(),
     H2O = col_double(),
-    PA_CELL = col_double(),
-    T_CELL = col_double(),
+    # PA_CELL = col_double(),
+    # T_CELL = col_double(),
+    PA = col_double(),
+    TA = col_double(),
     STATE = col_integer()
   )
   ds0 = read_csv(
@@ -83,8 +85,8 @@ read82z_single <- function(
   ##details<< Filters for row with STATE==5
   ds = as_tibble(ds0) %>%
     filter(STATE == 5) %>%
-    mutate(Pa=PA_CELL*1000, iChunk=iChunk, label=label) %>%
-    select(iChunk, label, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=T_CELL, Pa)
+    mutate(Pa=PA*1000, iChunk=iChunk, label=label) %>% # convert from kPa to Pa
+    select(iChunk, label, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=TA, H2O, Pa)
 }
 attr(read82z_single,"ex") <- function(){
   fName = "develop/x82_cases/82m-0147-20220125000045.82z"
