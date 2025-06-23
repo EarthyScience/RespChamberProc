@@ -52,6 +52,7 @@ read82z_single <- function(
   ## default: UTC
   , na = c('','NA','NAN','"NAN"','-9999') ##<< see \code{\link{read.table}}
   , iChunk = 1L
+  , filter_states = c(5L)  ##<< set to NA to return all the data
 ){
   ##seealso<< \code{\link{readDat}}
   ##details<<
@@ -78,19 +79,81 @@ read82z_single <- function(
     I(lines), col_types=col_types, col_select = all_of(names(col_types$cols)),
     name_repair = "minimal", progress=FALSE, na = na)
   attr(ds0,"spec") = NULL
-  ds0$Date = lubridate::as_datetime(paste(ds0$DATE, ds0$TIME), tz = tz)
+  ds0$TIMESTAMP = lubridate::as_datetime(paste(ds0$DATE, ds0$TIME), tz = tz)
   # parsing the label from metadata.json: "LI-8250"/"PORT_LABEL"
   metadata = fromJSON(unz(fName, "metadata.json"))
   label = metadata$`LI-8250`$PORT_LABEL
-  ##details<< Filters for row with STATE==5
-  ds = as_tibble(ds0) %>%
-    filter(STATE == 5) %>%
+  ##details<< Filters for row with STATE %in% filter_states (defaults to 5L)
+  ## set to NA to return all rows
+  ds1 = if (any(is.finite(filter_states))) filter(ds0, STATE %in% filter_states) else ds0
+  ds = ds1 %>%
     mutate(Pa=PA*1000, iChunk=iChunk, label=label) %>% # convert from kPa to Pa
-    select(iChunk, label, Date, CO2, CO2_dry=CO2_DRY, TA_Avg=TA, H2O, Pa)
+    select(iChunk, label, TIMESTAMP, CO2, CO2_dry=CO2_DRY, TA_Avg=TA, H2O, Pa, STATE)
 }
 attr(read82z_single,"ex") <- function(){
   fName = "develop/x82_cases/82m-0147-20220125000045.82z"
   ds = read82z_single(fName, iChunk=2L)
   str(ds)
+}
+
+read82summary <- function(
+    fName					          ##<< scalar string: file name
+    , chamber_for_port = seq(1L,12L) ##<< chamber ids indexed by port number.
+    ## defaults to port number itself
+    , ...					          ##<< further arguments to \code{\link{read_csv}}
+    , tz = "UTC"				    ##<< specify a time zone when converting to POSIXct,
+    ## default: UTC
+    , na = c('','NA','NAN','"NAN"','-9999') ##<< see \code{\link{read.table}}
+){
+  lines_all <- readLines(fName)
+  lines = lines_all[c(2,4:length(lines_all))] # skip 1st and 3rd row
+  col_types = cols(
+    DATE = col_character(), TIME = col_character(),
+    PORT = col_integer(),
+    FCO2 = col_double(),
+    FCO2_CV	= col_double(),
+    FCO2_R2 = col_double(),
+  )
+  ds0 = read_csv(
+    I(lines), col_types=col_types, col_select = all_of(names(col_types$cols)),
+    name_repair = "minimal", progress=FALSE, na = na)
+  attr(ds0,"spec") = NULL
+  ds0$TIMESTAMP = lubridate::as_datetime(paste(ds0$DATE, ds0$TIME), tz = tz)
+  ds <- as_tibble(ds0) %>%
+    mutate(collar = chamber_for_port[PORT]) %>%
+    select(TIMESTAMP, collar, resp=FCO2, FCO2_CV, FCO2_R2)
+
+}
+attr(read82summary,"ex") <- function(){
+  fName <- system.file("genData/82m-0147-20220125000000_dense_summary.csv", package = "RespChamberProc")
+  ds = ds0 = read82summary(fName)
+  str(ds)
+}
+
+.tmpf <- function() {
+  # read concentrations from 82z file and compute respiraiton,
+  # compare to resp from summary
+  fName = "develop/x82_cases/82m-0147-20220125000045.82z"
+  dsChunk = read82z_single(fName, iChunk=2L)
+  dsChunk = read82z_single(fName, iChunk=2L, filter_states = NA)
+  dsChunk$collar = strtoi(substr(dsChunk$label,3,3))
+  collar_spec <- tibble(
+    collar = unique(dsChunk$collar),
+    #volume = 22450 / 1e6, # from CO2Manip
+    #area = 0.15 * 0.70,
+    area = 317.79998779296875/ 1e4, # from metadata.json
+    volume = 5892.5 / 1e6,  #(4076.10009765625 + 317 * 4.8)/ 1e6 ,
+    tlag = 20.0)
+  ans <- calcClosedChamberFluxForChunkSpecs(dsChunk, collar_spec)
+  ans$flux # flux of 0.289 mumol / m2 / s, r2 of 0.9
+  plotResp(dsChunk, ans)
+  tClosed = filter(dsChunk, STATE == 5L)$TIMESTAMP[1] - dsChunk$TIMESTAMP[1]
+  abline( v=tClosed, lty="dashed", col="darkgrey" )
+  #
+  fNameSummary <- system.file("genData/82m-0147-20220125000000_dense_summary.csv", package = "RespChamberProc")
+  ds = read82summary(fNameSummary)
+  ds1 <- filter(ds, TIMESTAMP == dsChunk$TIMESTAMP[1], collar == dsChunk$collar[1])
+  ds1$resp   # 0.99  mumol / m2 / s ?
+  318 * 4.8 + 4076.10009765625
 }
 

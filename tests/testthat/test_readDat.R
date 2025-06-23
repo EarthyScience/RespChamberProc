@@ -134,6 +134,13 @@ test_that("x82 day",{
   }
 })
 
+test_that("x82 summary",{
+  fName <- system.file("genData/82m-0147-20220125000000_dense_summary.csv", package = "RespChamberProc")
+  chamber_for_port = LETTERS[seq( from = 1, to = 12 )]
+  ds = ds0 = read82summary(fName, chamber_for_port)
+  expect_equal(ds$collar[1:2], c("A","B"))
+})
+
 
 
 
