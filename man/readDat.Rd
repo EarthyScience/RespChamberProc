@@ -1,7 +1,7 @@
 \name{readDat}
 \alias{readDat}
 \title{readDat}
-\description{Read a data logger .dat file into a data-frame		}
+\description{Read a data logger .dat file into a data-frame}
 \usage{readDat(fName, nRowsFileInfo = 1, nRowsColInfo = 2, 
     sep = ",", ..., colClasses = rep(NA, 
         ncol(colInfo)), colsTimeStamp = 1, 
@@ -20,7 +20,7 @@ with column description}
   \item{colsTimeStamp}{integer vector: colums with time stamp column
 (will be set to POSIXct}
   \item{formatTS}{format string of the timestamp columns,
-see \code{\link{strptime}}, e.g. }
+see \code{\link{strptime}}, e.g.}
   \item{tz}{specify a time zone when converting to POSIXct,
 default: current local e.g CET, UTC}
   \item{na.strings}{see \code{link{read.table}}}

@@ -14,6 +14,8 @@ calcClosedChamberFluxForChunks <- function(
     ## (argument \code{volumne} in \code{\link{calcClosedChamberFlux}})
   , isVerbose = TRUE    ##<< set to FALSE to avoid messages
 ){
+  ##details<< \code{calcClosedChamberFluxForChunks} is superseded by
+  ## \code{\link{calcClosedChamberFluxForChunkSpecs}}.
   warning("calcClosedChamberFluxForChunks is superseded by ",
           "calcClosedChamberFluxForChunkSpecs. Consider it instead.")
   if (missing(volumesByChunk)) {
@@ -109,8 +111,10 @@ checkCollarSpec <- function(
 calcClosedChamberFluxForChunkSpecs <- function(
   ### apply \code{\link{calcClosedChamberFlux}} for each chunk in data
   dsChunk           ##<< tibble or data.frame with columns iChunk and collar
-  ,collar_spec      ##<< data.frame with area, volume, tlag for each collar
-  ## as created by \code{\link{setupCollarSpec}}
+  ,collar_spec      ##<< data.frame with columns
+  ## \code{collar}, \code{area}, \code{volume}, \code{tlag}
+  ## with rows for each collar.
+  ## To supply parameters to \code{\link{calcClosedChamberFlux}}.
   , ...               ##<< further arguments to
   ## \code{\link{calcClosedChamberFlux}}
   , isVerbose = TRUE  ##<< set to FALSE to avoid messages

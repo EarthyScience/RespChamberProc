@@ -1,7 +1,7 @@
 \name{plotResp}
 \alias{plotResp}
 \title{plotResp}
-\description{plot a single time series, and the fit }
+\description{plot a single time series, and the fit}
 \usage{plotResp(dsi, resFlux = NULL, colConc = "CO2_dry", 
     colTime = "TIMESTAMP", ylab = "CO2_dry (ppm)", 
     xlab = "Time (s)", label = "")}

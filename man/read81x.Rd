@@ -1,7 +1,7 @@
 \name{read81x}
 \alias{read81x}
 \title{read81x}
-\description{Read a Licor generated .x81 file into a data-frame		}
+\description{Read a Licor generated .x81 file into a data-frame}
 \usage{read81x(fName, nRowsFileInfo = 23, sep = "\\t", 
     ..., colsTimeStamp = 3, formatTS = NULL, 
     tz = "UTC", na.strings = c("", "NA", 
@@ -24,7 +24,7 @@ measurements to generate column \code{label}}
 }
 \details{version of \code{\link{readDat}} with adjusted defaults.
 
-This function is deprecated because its superseeded by the 
+This function is deprecated because its superseeded by the
 more versatile \code{\link{read81xVar}}.}
 
 

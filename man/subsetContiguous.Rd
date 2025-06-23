@@ -1,7 +1,7 @@
 \name{subsetContiguous}
 \alias{subsetContiguous}
 \title{subsetContiguous}
-\description{Get contiguous subsets }
+\description{Get contiguous subsets}
 \usage{subsetContiguous(ds, colTime = "TIMESTAMP", 
     colIndex = "Collar", colMeasure = "CO2_dry", 
     gapLength = 12, minNRec = 20, minTime = 60, 
@@ -20,17 +20,18 @@ records not to use}
   \item{fIsBadChunk}{
 }
 }
-\details{The time series in logger data consists of several chunks of 
+\details{The time series in logger data consists of several chunks of
 concentration measurments.
-In order to determine these chunks, either a change in an index variable 
+In order to determine these chunks, either a change in an index variable
 (input by between the measurements) or a gap in time is used.
 
 Between the actual series of measurements, the logger may record sparse data.
 These chunks are indicated by value \code{indexNA} in the index column or
-by shortness of the series. Only chunks with at least \code{minNRec} records 
+by shortness of the series. Only chunks with at least \code{minNRec} records
 and at least  \code{minTime} seconds are reported. Others are neglected.}
-\value{Argument \code{ds} with between-Chunk rows omitted and an additional 
-integer column \code{iChunk} that designates the chunk number.}
+\value{Argument \code{ds} with between-Chunk rows omitted and an additional
+modified factor columns \code{iChunk} and \code{collar} that designates the
+chunk number and index variable respectively.}
 
 \author{Thomas Wutzler, Oscar Perez Priego}
 
