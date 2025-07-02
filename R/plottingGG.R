@@ -114,9 +114,14 @@ plotCampaignConcSeries <- function(
       p1b <-
         p1 +
         ggplot2::geom_vline(
-          data = select(ungroup(dsFitsPage), !!sym("tLag"), !!sym("id"))
+          data = select(ungroup(dsFitsPage), !!sym("tLag"), !!sym("tmax"), !!sym("id"))
           , ggplot2::aes(xintercept = tLag)
-          , color = "darkgrey", linetype = "dashed", na.rm = TRUE) + {
+          , color = "darkgrey", linetype = "dashed", na.rm = TRUE) +
+        ggplot2::geom_vline(
+          data = select(ungroup(dsFitsPage), !!sym("tLag"), !!sym("tmax"), !!sym("id"))
+          , ggplot2::aes(xintercept = tmax)
+          , color = "darkgrey", linetype = "dashed", na.rm = TRUE) +
+        {
             if (length(dfFitted)) {
               ggplot2::geom_line(
                 data = dfFitted, ggplot2::aes(y = fitted)

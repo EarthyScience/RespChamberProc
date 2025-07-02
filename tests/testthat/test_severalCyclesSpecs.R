@@ -4,14 +4,14 @@ context("severalCyclesSpecs")
 
 # fit chambers in parallel inside calcClosedChamberFluxForChunkSpecs
 library(furrr)
-plan(multisession, workers = 2) 
+plan(multisession, workers = 2)
 
 fName <- system.file(
   "genData/SMANIE_Chamber1_26032015.zip", package = "RespChamberProc")
-if (nzchar(fName)) { 
+if (nzchar(fName)) {
   ds0 <- readDat(
     unz(fName, filename = unzip(fName, list = TRUE)[1,"Name"] ),tz = "UTC")
-  ds <- ds0 %>% 
+  ds <- ds0 %>%
     #filter(TIMESTAMP < as.POSIXct("2015-03-26 06:19:01", tz = "UTC"))
     filter(Collar <= 2)
   ds$Pa <- ds$AirPres * 100  # convert hPa to Pa
@@ -19,9 +19,9 @@ if (nzchar(fName)) {
   ds$H2O_dry <- corrConcDilution(ds, colConc = "H2O_LI840", colVapour = "H2O_LI840")
   ds$VPD <- calcVPD( ds$SurTemp, ds$Pa, ds$H2O_LI840)
   #
-  dsChunk <- subsetContiguous(ds, colTime = "TIMESTAMP", colIndex = "Collar") 
+  dsChunk <- subsetContiguous(ds, colTime = "TIMESTAMP", colIndex = "Collar")
   test_that("subsetContiguous",{
-        expect_true( nrow(dsChunk) > 1 )    
+        expect_true( nrow(dsChunk) > 1 )
         expect_true( nrow(dsChunk) < nrow(ds) )
         expect_true( all( names(ds) %in% names(dsChunk)) )
         expect_true( all( "iChunk" %in% names(dsChunk)) )
@@ -34,52 +34,55 @@ if (nzchar(fName)) {
   surfaceArea = 0.6*0.6
   #
   collar_spec <- tibble(
-    collar = unique(dsChunk$collar), 
+    collar = unique(dsChunk$collar),
     depth = pmax(0,seq(0,0.03,length.out=length(collar))),
     area = surfaceArea,
     volume = chamberVol + surfaceArea * depth,
-    tlag = NA)
+    #tlag = NA,
+    tlag = 15,
+    tmax = 80
+  )
   #
   resChunks <- calcClosedChamberFluxForChunkSpecs(
     dsChunk, collar_spec, colTemp = "T_LI840"
     # linear and saturating shape
-    ,fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
+    ,fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)
     ,debugInfo = list(omitEstimateLeverage = TRUE))  # faster
 
   test_that("calcClosedChamberFluxForChunks", {
-        expect_true( nrow(resChunks) > 1 )    
+        expect_true( nrow(resChunks) > 1 )
         expect_true( all( c("flux","sdFlux") %in% names(resChunks)) )
         expect_true( all( c("iChunk","collar") %in% names(resChunks)) )
         expect_true( all( table(resChunks$iChunk) == 1) )
       })
-  
+
   test_that("non-unique collars per iChunk",{
         dsChunk2 <- dsChunk; dsChunk2$collar[1:8] <- 3
         expect_error(
           resChunks2 <- calcClosedChamberFluxForChunkSpecs(
             dsChunk2, collar_spec, colTemp = "T_LI840"
-            , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
+            , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)
             , debugInfo = list(omitEstimateLeverage = TRUE))
           ,"not unique collars.*3")
       })
-  
+
   test_that("missing collars per iChunk",{
     dsChunk2 <- mutate(dsChunk, collar = ifelse(collar == 1, NA, collar))
     expect_error(
       resChunks2 <- calcClosedChamberFluxForChunkSpecs(
         dsChunk2, collar_spec, colTemp = "T_LI840"
-        , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
+        , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)
         , debugInfo = list(omitEstimateLeverage = TRUE))
       ,"not specify volume.*iChunks.*3,4")
     collar_spec2 <- collar_spec %>% filter(collar != 2)
     expect_error(
       resChunks2 <- calcClosedChamberFluxForChunkSpecs(
         dsChunk, collar_spec2, colTemp = "T_LI840"
-        , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)  
+        , fRegress = c(lin = regressFluxLinear, tanh = regressFluxTanh)
         , debugInfo = list(omitEstimateLeverage = TRUE))
       ,"not specify volume.*collars.*2")
   })
-  
+
   test_that("missing collumns in collar_spec",{
     collar_spec2 <- collar_spec %>% select(!tlag)
     is_valid <- checkCollarSpec(dsChunk, collar_spec2)
@@ -101,7 +104,7 @@ if (nzchar(fName)) {
   #dsPlots <- plotCampaignConcSeries(dsChunk, resChunks1, isVerbose = FALSE)
   #dsPlots$plot[[1]]
   test_that("plotCampaignConcSeries",{
-        expect_true( nrow(dsPlots) > 0 )    
+        expect_true( nrow(dsPlots) > 0 )
         expect_true( all( c("iPage","plot") %in% names(dsPlots)) )
         expect_true( inherits( dsPlots$plot[[1]],"ggplot") )
       })
