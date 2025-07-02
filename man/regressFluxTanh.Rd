@@ -8,7 +8,7 @@
   \item{conc}{numeric vector of CO2 concentrations []}
   \item{times}{times of conc measurements	[seconds]}
   \item{start}{numeric vector of starting parameters. May provide
-from last bootstrap to speed up fitting  }
+from last bootstrap to speed up fitting}
   \item{cSatFac}{Position of the initial estimate of
 saturation (0 start, 1 end, >1 outside measured range)}
   \item{tryAutoCorr}{set to FALSE to not try to fit model
@@ -28,7 +28,7 @@ The caller must provide conc and times all finite.}
 \examples{
 #data(chamberLoggerEx1s)
 ds <- chamberLoggerEx1s[-(1:16),]
-conc <- ds$CO2_dry <- corrConcDilution(ds)  
+conc <- ds$CO2_dry <- corrConcDilution(ds)
 times <- ds$TIMESTAMP
 times0 <- as.numeric(times) - as.numeric(times[1])
 #trace(regressFluxTanh, recover)	#untrace(regressFluxTanh)

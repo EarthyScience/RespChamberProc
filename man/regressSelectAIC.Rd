@@ -1,7 +1,7 @@
 \name{regressSelectAIC}
 \alias{regressSelectAIC}
 \title{regressSelectAIC}
-\description{select regression function based on minimum AIC of the fits	}
+\description{select regression function based on minimum AIC of the fits}
 \usage{regressSelectAIC(fluxEstL)}
 \arguments{
   \item{fluxEstL}{list of return values of different regression functions

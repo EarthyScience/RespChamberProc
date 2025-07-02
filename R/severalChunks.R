@@ -112,26 +112,29 @@ calcClosedChamberFluxForChunkSpecs <- function(
   ### apply \code{\link{calcClosedChamberFlux}} for each chunk in data
   dsChunk           ##<< tibble or data.frame with columns iChunk and collar
   ,collar_spec      ##<< data.frame with columns
-  ## \code{collar}, \code{area}, \code{volume}, \code{tlag}
+  ## \code{collar}, \code{area}, \code{volume}, \code{tlag}, \code{tmax}
   ## with rows for each collar.
   ## To supply parameters to \code{\link{calcClosedChamberFlux}}.
   , ...               ##<< further arguments to
   ## \code{\link{calcClosedChamberFlux}}
   , isVerbose = TRUE  ##<< set to FALSE to avoid messages
 ){
+  ##details<< if tmax ins not provided, it is assumed to be NA and all records
+  ## after lag-time are used for fitting
+  if (!("tmax" %in% colnames(collar_spec))) collar_spec$tmax = NA_real_
   dsChunkNested <- dsChunk %>% nest(.by=c(iChunk, collar))
   dsChunkSpec <- dsChunkNested %>% left_join(collar_spec, by=join_by(collar))
   if (nrow(dsChunkSpec) != nrow(dsChunkSpec) || any(is.na(dsChunkSpec$volume)))  {
     isValid <- checkCollarSpec(dsChunk, collar_spec)
     if (!isValid) stop(attr(isValid, "msg")) else stop("Problem joining ")
   }
-  f_chunk <- function(dss, area, volume, tlag, ...){
+  f_chunk <- function(dss, area, volume, tlag, tmax, ...){
     res <- calcClosedChamberFlux(
-      dss, area=area, volume=volume, useFixedTLag = tlag, ...)
+      dss, area=area, volume=volume, useFixedTLag = tlag, tmax = tmax, ...)
   }
   ans <- dsChunkSpec  %>%
     mutate(res = future_pmap(
-      list(data, area, volume, tlag), f_chunk, ..., .options=furrr_options(seed = NULL))) %>%
+      list(data, area, volume, tlag, tmax), f_chunk, ..., .options=furrr_options(seed = NULL))) %>%
     select(iChunk, collar, res) %>% unnest(cols = c(res))
   ##value<< a tibble with a row for each measurement cycle and additional
   ## column <colChunk> identifying the measurement cycle

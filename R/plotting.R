@@ -15,10 +15,13 @@ plotResp <- function(
 	fluxText <- ""
 	if( length(resFlux) ){
 		tLag <- resFlux$tLag
+		tmax <- resFlux$tmax
+		if (!is.finite(tmax)) tmax = max(times0)
 		abline( v=tLag, lty="dotted", col="grey" )
+		abline( v=tmax, lty="dotted", col="grey" )
 		#lines( fitted(resFlux$model[[resFlux$iFRegress]]) ~ I(times0[times0 >= tLag]) )
 		# only one model provided
-		lines( fitted(resFlux$model[[1L]]) ~ I(times0[times0 >= tLag]), col = "blue" )
+		lines( fitted(resFlux$model[[1L]]) ~ I(times0[between(times0,tLag,tmax)]), col = "blue" )
 		prec=	ceiling(max(0, -log10(resFlux$sdFlux) ))
 		fluxText <- paste( round(resFlux$flux, prec), " \u00B1", round(resFlux$sdFlux, prec),sep="")
 	}

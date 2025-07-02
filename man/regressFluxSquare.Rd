@@ -26,7 +26,7 @@ for return for plotting}
 \examples{
 #data(chamberLoggerEx1s)
 ds <- chamberLoggerEx1s
-conc <- ds$CO2_dry <- corrConcDilution(ds)  
+conc <- ds$CO2_dry <- corrConcDilution(ds)
 times <- ds$TIMESTAMP
 res <- regressFluxSquare( conc, times  )
 plot( conc ~ times)

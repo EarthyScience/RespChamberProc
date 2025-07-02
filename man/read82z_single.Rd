@@ -33,6 +33,8 @@ set to NA to return all rows}
 \seealso{\code{\link{readDat}}}
 \examples{
 fName = "develop/x82_cases/82m-0147-20220125000045.82z"
-ds = read82z_single(fName, iChunk=2L)
-str(ds)
+if (file.exists(fName)) {
+  ds = read82z_single(fName, iChunk=2L)
+  str(ds)
+}
 }

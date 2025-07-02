@@ -27,6 +27,8 @@ consecutive integer iChunk identifier.}
 
 \examples{
 fName = "develop/x82_cases/licor82.zip"
-ds = read82z(fName, temp_base_dir = "/dev/shm")
-str(ds)
+if (file.exists(fName)) {
+  ds = read82z(fName, temp_base_dir = "/dev/shm")
+  str(ds)
+}
 }
