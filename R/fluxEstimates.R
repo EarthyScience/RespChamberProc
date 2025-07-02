@@ -94,7 +94,7 @@ calcClosedChamberFlux <- function(
     	dslRes <- selectDataAfterLag(ds, colConc = colConc, colTime = colTime
     	         , tLagFixed = useFixedTLag, maxLag = maxLag, minTLag = minTLag)
 	}
-	dsl <- dslRes$ds
+	dsl <- dslRes$ds  # only data after lag
 	# constrain to finite records for fitting
 	dsl <- dsl[ is.finite(dsl[[colConc]]) & is.finite(dsl[[colTime]]),,drop = FALSE]
 	if (nrow(dsl) < 8L ) return(retEmpty)
@@ -111,9 +111,9 @@ calcClosedChamberFlux <- function(
 				 , paste(capture.output(ds[1,1:5]), collapse = "\n") )
 	}
 	dsl$times0 <- as.numeric(dsl[[colTime]]) - as.numeric(dsl[[colTime]][1])
-	# constrain dataset to maximum time
-	if (is.finite(tmax)) dsl <- subset(dsl, times0 <= tmax)
-  tLag <- as.numeric(timesOrig[ dslRes$lagIndex ]) - as.numeric(timesOrig[1])
+	tLag <- as.numeric(timesOrig[ dslRes$lagIndex ]) - as.numeric(timesOrig[1])
+	# constrain dataset to maximum time  tLag + times0 <= tmax
+	if (is.finite(tmax)) dsl <- subset(dsl, times0 <= tmax - tLag)
 	#abline(v = tLag+ds[1,colTime] )
 	#
 	# removed check for linear fit
