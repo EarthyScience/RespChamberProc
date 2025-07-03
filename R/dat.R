@@ -233,7 +233,8 @@ read81xVar <- function(
       , ...
       , colClasses = colClasses
     )
-    cbind( iChunk = iChunkBaseInt + iChunk
+    doi = as.POSIXlt(rawData$Date[1])$yday
+    cbind( iChunk = as.factor(doi):as.factor(iChunkBaseInt + iChunk)
            # constrain to Type 1, i.e. measurement records
            , rawData[rawData$Type == 1L, seq_along(colNamesChunk0)]
            , label = label )
