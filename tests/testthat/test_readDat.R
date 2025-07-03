@@ -6,8 +6,8 @@ test_that("x81 example",{
 			if (nzchar(fName)) {
 				#ds <- read81x(fName)
 				ds <- read81xVar(fName, iChunkBase = 1000)
-				expect_true( is.factor(ds$iChunk))
-        expect_true( ds$iChunk[1] == "271:1001")
+				expect_true( inherits(ds$iChunk, "integer"))
+				expect_true( all(ds$iChunk > 1000 ))
 				expect_true( table(ds$iChunk)[1] > 1 )
 				expect_true( ds$label[1] == "Flux2_140929_1600" )
 				#plot( CO2 ~ Date, ds )
@@ -20,6 +20,7 @@ test_that("x81 annotation",{
 			if (nzchar(fName)) {
 				#ds <- read81x(fName)
 				ds <- read81xVar(fName)
+				expect_true( max(ds$iChunk) > 1 )
 				expect_true( table(ds$iChunk)[1] > 1 )
 				expect_true( "some Comment" %in% ds$Annotation )
 				#table( ds$label )
@@ -88,7 +89,7 @@ test_that("issue #5",{
     "genData/2312_issue005_small.81x", package = "RespChamberProc")
   skip_if_not(nzchar(fName))
   ds <- read81xVar(fName)
-  expect_true( ds$iChunk[1] == "274:1" )
+  expect_true( max(ds$iChunk) > 1 )
   expect_true( table(ds$iChunk)[1] > 1 )
 })
 

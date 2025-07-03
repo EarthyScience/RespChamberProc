@@ -38,8 +38,8 @@ if (nzchar(fName)) {
     depth = pmax(0,seq(0,0.03,length.out=length(collar))),
     area = surfaceArea,
     volume = chamberVol + surfaceArea * depth,
-    tlag = NA,
-    #tlag = 15,
+    #tlag = NA,
+    tlag = 15,
     tmax = 80
   )
   #

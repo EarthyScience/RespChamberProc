@@ -88,13 +88,8 @@ read82z_single <- function(
   ##details<< Filters for row with STATE %in% filter_states (defaults to 5L)
   ## set to NA to return all rows
   ds1 = if (any(is.finite(filter_states))) filter(ds0, STATE %in% filter_states) else ds0
-  doi = as.POSIXlt(ds1$TIMESTAMP[1])$yday
   ds = ds1 %>%
-    mutate(
-      Pa=PA*1000, # convert from kPa to Pa
-      iChunk=as.factor(doi):as.factor(iChunk),
-      label=label
-    ) %>%
+    mutate(Pa=PA*1000, iChunk=iChunk, label=label) %>% # convert from kPa to Pa
     select(iChunk, label, TIMESTAMP, CO2, CO2_dry=CO2_DRY, TA_Avg=TA, H2O, Pa, STATE)
 }
 attr(read82z_single,"ex") <- function(){
