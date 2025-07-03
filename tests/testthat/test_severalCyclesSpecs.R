@@ -101,7 +101,7 @@ if (nzchar(fName)) {
   suppressMessages(
     dsPlots <- plotCampaignConcSeries( dsChunk, resChunks, isVerbose = FALSE)
     )
-  #dsPlots <- plotCampaignConcSeries(dsChunk, resChunks1, isVerbose = FALSE)
+  #dsPlots <- plotCampaignConcSeries(dsChunk, resChunks, isVerbose = FALSE)
   #dsPlots$plot[[1]]
   test_that("plotCampaignConcSeries",{
         expect_true( nrow(dsPlots) > 0 )

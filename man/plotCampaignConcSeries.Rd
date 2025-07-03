@@ -8,7 +8,8 @@
     fTextBR = NULL, fTextTL = NULL, fTextTR = NULL, 
     fTextHead = NULL, plotsPerPage = 64, 
     fileName = "", ggplotList = c(), ylabel = paste0(varName, 
-        " (", yunit, ")"), yunit = "", isVerbose = TRUE)}
+        " (", yunit, ")"), yunit = "", isVerbose = TRUE, 
+    prepent_doi = TRUE)}
 \arguments{
   \item{ds}{data frame to plot, with columns \code{colChunk}
 , \code{collar}, \code{timeCol} and \code{varName}}
@@ -38,6 +39,7 @@ all plots are printed to  #paste0(varName,".pdf")}
 may provide a string of the unit}
   \item{yunit}{scalar string, part of default y label}
   \item{isVerbose}{set to FALSE to avoid messages}
+  \item{prepent_doi}{set to FALSE to not prepend the yday to the ActiveCycle}
 }
 
 \value{a tibble with columns page and plot, the second column

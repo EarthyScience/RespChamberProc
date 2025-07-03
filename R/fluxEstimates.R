@@ -183,6 +183,7 @@ calcClosedChamberFlux <- function(
 		,tmax = tmax                                 ##<< maximum time fitted in seconds
 		,lagIndex = dslRes$lagIndex 					       ##<< index of the row at the
 		  ## end of lag-time
+		,timestamp = ds[[colTime]][dslRes$lagIndex]
 		,autoCorr = as.numeric(fluxEst["autoCorr"])	 ##<< autocorrelation coefficient,
 		  ## NA if model with autocorrelation could not be fitted or had higher
 		  ## AIC than a model without autocorrelation

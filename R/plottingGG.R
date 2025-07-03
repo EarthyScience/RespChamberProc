@@ -28,6 +28,7 @@ plotCampaignConcSeries <- function(
     ## may provide a string of the unit
   , yunit = ""           ##<< scalar string, part of default y label
   , isVerbose = TRUE     ##<< set to FALSE to avoid messages
+  , prepent_doi = TRUE   ##<< set to FALSE to not prepend the yday to the ActiveCycle
 ){
   if (!requireNamespace("ggplot2")) stop(
     "package ggplot2 must be installed for this function to work.")
@@ -42,8 +43,14 @@ plotCampaignConcSeries <- function(
   #iCamp <- 1
   #dss <- subset(ds, campaign==1 & Chamber==1)
   uniqueId <- unique(ds[[colChunk]])
-  if (is.null(fTextHead)) fTextHead <- function(resFit){
-    paste0(resFit[[colChunk]], "/", resFit$collar)}
+  if (is.null(fTextHead)) {
+    fTextHead <- if (prepent_doi) function(resFit){
+      doi <- as.POSIXlt(resFit$timestamp)$yday
+      paste0(doi,":",resFit[[colChunk]], "/", resFit$collar)
+    } else function(resFit) {
+      paste0(resFit[[colChunk]], "/", resFit$collar)
+    }
+  }
   id_labels <- structure(fTextHead(dsFits), names = paste(dsFits[[colChunk]]))
   N <- length(uniqueId)
   ds$id <- factor(ds[[colChunk]])  # drop unused factor levels
