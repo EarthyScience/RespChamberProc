@@ -101,6 +101,12 @@ if (nzchar(fName)) {
   suppressMessages(
     dsPlots <- plotCampaignConcSeries( dsChunk, resChunks, isVerbose = FALSE)
     )
+  dsChunkInt <- mutate(dsChunk, iChunk = as.integer(iChunk))
+  resChunksInt <- mutate(resChunks, iChunk = as.integer(iChunk))
+  suppressMessages(
+    dsPlots <- plotCampaignConcSeries( dsChunkInt, resChunksInt, isVerbose = FALSE)
+  )
+
   #dsPlots <- plotCampaignConcSeries(dsChunk, resChunks, isVerbose = FALSE)
   #dsPlots$plot[[1]]
   test_that("plotCampaignConcSeries",{

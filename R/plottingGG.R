@@ -53,7 +53,10 @@ plotCampaignConcSeries <- function(
   }
   id_labels <- structure(fTextHead(dsFits), names = paste(dsFits[[colChunk]]))
   N <- length(uniqueId)
-  ds$id <- factor(ds[[colChunk]])  # drop unused factor levels
+  #twutz2506: ds[[colChunk]] might not be a factor -> problems with joins
+  #   when converting it to factor
+  #ds$id <- factor(ds[[colChunk]])  # drop unused factor levels
+  ds$id <- ds[[colChunk]]
   idu <- unique(ds$id)
   #if (length(resL) && is.null(names(resL)) ) names(resL) <- levels(ds$id)
   if (length(qualityFlag) == 1L) qualityFlag <- rep(qualityFlag, N)
@@ -63,6 +66,7 @@ plotCampaignConcSeries <- function(
   # join quality flag to ds and to dsFits
   # factor to get discrete color scale
   dsQf <- data.frame(id = uniqueId, qf = factor(qualityFlag))
+  recover()
   ds <- suppressWarnings(left_join(ds, dsQf, by = "id"))
   dsQf[[colChunk]] <- dsQf$id; dsQf$id <- NULL
   dsFits <- suppressWarnings(left_join(dsFits, dsQf, by = colChunk))
