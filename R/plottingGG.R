@@ -66,7 +66,6 @@ plotCampaignConcSeries <- function(
   # join quality flag to ds and to dsFits
   # factor to get discrete color scale
   dsQf <- data.frame(id = uniqueId, qf = factor(qualityFlag))
-  recover()
   ds <- suppressWarnings(left_join(ds, dsQf, by = "id"))
   dsQf[[colChunk]] <- dsQf$id; dsQf$id <- NULL
   dsFits <- suppressWarnings(left_join(dsFits, dsQf, by = colChunk))
