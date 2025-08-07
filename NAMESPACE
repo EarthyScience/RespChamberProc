@@ -26,4 +26,5 @@ import(dplyr)
 import(tidyr) # nest, unnest
 import(furrr) # plan, future_pmap
 import(readr)
+import(lubridate)
 #importFrom(lazyeval, interp)

@@ -6,11 +6,23 @@ as.POSIXctUTC <- function(
 }
 attr(as.POSIXctUTC,"ex") <- function(){
   #tmp1 <- as.POSIXct(c("2014-06-23 00:00:01","2014-06-23 05:00:01"))
-  #plot(tmp1)    
+  #plot(tmp1)
   tmp <- as.POSIXctUTC(c("2014-06-23 00:00:01","2014-06-23 05:00:01"))
   print(tmp)
-  # note that teh following it is not converted to local 
+  # note that teh following it is not converted to local
   # time e.g. CET, but ggplot respects timezone attribute
-  plot(tmp)    
-  #ggplot(data.frame(date=tmp, y=seq_along(tmp)), aes(date,y)) + geom_point() 
+  plot(tmp)
+  #ggplot(data.frame(date=tmp, y=seq_along(tmp)), aes(date,y)) + geom_point()
+}
+
+get_minuteofday <- function(
+    ### compute the accumulated minute since midnight
+    t  ##<< An time that can be interpreted by as.POSIXlt
+) {
+  ##value<< minutes after midnight in [0,24*60-1]
+  hour(t)*60 + minute(t)
+}
+attr(get_minuteofday,"ex") <- function(){
+  t <- as.POSIXctUTC(c("2014-06-23 00:00:01","2014-06-23 05:12:01","2014-06-23 23:59:01"))
+  get_minuteofday(t)
 }
