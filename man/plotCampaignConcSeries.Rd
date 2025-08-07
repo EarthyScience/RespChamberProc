@@ -4,9 +4,9 @@
 \description{get a series of ggplots of the time series and its fits}
 \usage{plotCampaignConcSeries(ds, dsFits = NULL, 
     varName = "CO2_dry", colChunk = "iChunk", 
-    timeCol = "TIMESTAMP", qualityFlag = 0, 
-    fTextBR = NULL, fTextTL = NULL, fTextTR = NULL, 
-    fTextHead = NULL, plotsPerPage = 64, 
+    colCycle = colChunk, timeCol = "TIMESTAMP", 
+    qualityFlag = 0, fTextBR = NULL, fTextTL = NULL, 
+    fTextTR = NULL, fTextHead = NULL, plotsPerPage = 64, 
     fileName = "", ggplotList = c(), ylabel = paste0(varName, 
         " (", yunit, ")"), yunit = "", isVerbose = TRUE, 
     prepent_doi = TRUE)}
@@ -18,6 +18,7 @@
 with columns <colChunk>, flux, sdFlux, model,}
   \item{varName}{variable to plot}
   \item{colChunk}{column name of identifier of one time series}
+  \item{colCycle}{column name, used in default heading of each plot}
   \item{timeCol}{column name of the time collumn}
   \item{qualityFlag}{vector of length unique(ds[[colChunk]]):
 quality flag. For chunks where

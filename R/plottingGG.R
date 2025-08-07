@@ -7,6 +7,7 @@ plotCampaignConcSeries <- function(
     ## with columns <colChunk>, flux, sdFlux, model,
   , varName = "CO2_dry"  ##<< variable to plot
   , colChunk = "iChunk"  ##<< column name of identifier of one time series
+  , colCycle = colChunk  ##<< column name, used in default heading of each plot
   , timeCol = "TIMESTAMP"##<< column name of the time collumn
   , qualityFlag = 0      ##<< vector of length unique(ds[[colChunk]]):
     ## quality flag. For chunks where
@@ -46,7 +47,7 @@ plotCampaignConcSeries <- function(
   if (is.null(fTextHead)) {
     fTextHead <- if (prepent_doi) function(resFit){
       doi <- as.POSIXlt(resFit$timestamp)$yday
-      paste0(doi,":",resFit[[colChunk]], "/", resFit$collar)
+      paste0(doi,":",resFit[[colCycle]], "/", resFit$collar)
     } else function(resFit) {
       paste0(resFit[[colChunk]], "/", resFit$collar)
     }
