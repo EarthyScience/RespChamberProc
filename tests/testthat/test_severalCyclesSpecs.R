@@ -4,6 +4,7 @@ context("severalCyclesSpecs")
 
 # fit chambers in parallel inside calcClosedChamberFluxForChunkSpecs
 library(furrr)
+library(lubridate)
 plan(multisession, workers = 2)
 
 fName <- system.file(
@@ -97,14 +98,24 @@ if (nzchar(fName)) {
     expect_match(attr(is_valid,"msg"),"not unique specification.*1,2")
   })
 
-  #
   suppressMessages(
     dsPlots <- plotCampaignConcSeries( dsChunk, resChunks, isVerbose = FALSE)
     )
   dsChunkInt <- mutate(dsChunk, iChunk = as.integer(iChunk))
   resChunksInt <- mutate(resChunks, iChunk = as.integer(iChunk))
   suppressMessages(
-    dsPlots <- plotCampaignConcSeries( dsChunkInt, resChunksInt, isVerbose = FALSE)
+    dsPlots2 <- plotCampaignConcSeries( dsChunkInt, resChunksInt, isVerbose = FALSE)
+  )
+
+  # test iChunk being a true factor that cannot be converted to integer
+  dsChunkFac <- dsChunk %>% mutate(iChunk2=iChunk) %>% group_by(iChunk2) %>%
+    mutate(iChunk = as.factor(yday(min(TIMESTAMP))):as.factor(as.integer(iChunk[1]))) %>%
+    ungroup()
+  # note that colCylce is taken from resChunks rather than dsChunk
+  resChunksFac <- mutate(resChunks, iChunk2=iChunk, iChunk = factor(yday(timestamp)):factor(as.integer(iChunk)))
+  suppressMessages(
+    dsPlots <- plotCampaignConcSeries(
+      dsChunkFac, resChunksFac, isVerbose = FALSE, colCycle="iChunk2")
   )
 
   #dsPlots <- plotCampaignConcSeries(dsChunk, resChunks, isVerbose = FALSE)

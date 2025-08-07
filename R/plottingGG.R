@@ -20,7 +20,7 @@ plotCampaignConcSeries <- function(
     ## top right of the plot, by default the provided quality flag,
     ## where it is not zero
   , fTextHead = NULL     ##<< function(resFit) to specify the facet heading text
-    ## defaults to \code{paste0(resFit[[colChunk]],"/", resFit$collar)}
+    ## defaults to doi:<colCycle>/collar, where doi starts from zero (POSIXlt()$yday)
   , plotsPerPage = 64    ##<< number of plots per page
   , fileName = ""        ##<< if non-zero length string, the fileName where
     ## all plots are printed to  #paste0(varName,".pdf")
@@ -70,6 +70,8 @@ plotCampaignConcSeries <- function(
   ds <- suppressWarnings(left_join(ds, dsQf, by = "id"))
   dsQf[[colChunk]] <- dsQf$id; dsQf$id <- NULL
   dsFits <- suppressWarnings(left_join(dsFits, dsQf, by = colChunk))
+  # edge case: logical if all NA
+  dsFits <- mutate(dsFits, tLag = as.numeric(tLag), tmax = as.numeric(tmax))
   dsFin <- filter(ds, is.finite(!!sym(varName)))
   colCodes <- structure(
     rep("lightgray", length(levels(dsFin$qf)) ), names = levels(dsFin$qf))
