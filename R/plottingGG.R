@@ -4,7 +4,7 @@ plotCampaignConcSeries <- function(
     ## , \code{collar}, \code{timeCol} and \code{varName}
   , dsFits = NULL        ##<< tibble of results of
     ## \code{\link{calcClosedChamberFlux}}
-    ## with columns <colChunk>, flux, sdFlux, model,
+    ## with columns <colChunk>, flux, sdFlux, model, tLag, tmax
   , varName = "CO2_dry"  ##<< variable to plot
   , colChunk = "iChunk"  ##<< column name of identifier of one time series
   , colCycle = colChunk  ##<< column name, used in default heading of each plot
@@ -71,6 +71,7 @@ plotCampaignConcSeries <- function(
   dsQf[[colChunk]] <- dsQf$id; dsQf$id <- NULL
   dsFits <- suppressWarnings(left_join(dsFits, dsQf, by = colChunk))
   # edge case: logical if all NA
+  if (!("tmax" %in% names(dsFits))) dsFits$tmax = NA # fitted without tmax?
   dsFits <- mutate(dsFits, tLag = as.numeric(tLag), tmax = as.numeric(tmax))
   dsFin <- filter(ds, is.finite(!!sym(varName)))
   colCodes <- structure(
